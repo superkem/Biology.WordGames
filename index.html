@@ -1,0 +1,2028 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Biology Puzzle Break</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@500;600&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: one column. Title with tape stripe, four puzzle tabs, one active panel, teacher gate in the footer.
+   The navy/teal tape stripe under the title is the single bold gesture; the puzzles stay quiet. */
+:root{
+  --bg:#F6F2F8; --surface:#FFFFFF; --surface-2:#EDE6F2; --ink:#2A1838; --muted:#6A5A78; --line:#DACFE3;
+  --navy:#5A2D82; --teal:#B3267A; --teal-soft:#F6DCEB; --orange:#E36C09; --orange-ink:#A94700;
+  --btn-bg:#5A2D82; --btn-fg:#FFFFFF; --good:#1E7F55; --bad:#B42318; --focus:#E36C09;
+  --sel-bg:#FFE0C2; --cw-word:#E8DCF3; --cw-cur:#FFD3A3; --wrong:#F8D2CE; --block:#2A1838;
+  --font-display:'Barlow Condensed','Arial Narrow',Arial,sans-serif;
+  --font-body:'Source Sans 3','Segoe UI',Arial,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1A0F24; --surface:#2A1838; --surface-2:#3A2450; --ink:#F1E9F7; --muted:#B9A8CA; --line:#4A3562;
+    --navy:#C9A6F0; --teal:#F07AB8; --teal-soft:#4A1F3C; --orange:#FF9A4D; --orange-ink:#FFB47A;
+    --btn-bg:#FF9A4D; --btn-fg:#2A1838; --good:#5FD3A0; --bad:#FF8A80; --focus:#FF9A4D;
+    --sel-bg:#5C3A18; --cw-word:#4A2D6B; --cw-cur:#6B4620; --wrong:#5A2A2A; --block:#12091B;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1A0F24; --surface:#2A1838; --surface-2:#3A2450; --ink:#F1E9F7; --muted:#B9A8CA; --line:#4A3562;
+  --navy:#C9A6F0; --teal:#F07AB8; --teal-soft:#4A1F3C; --orange:#FF9A4D; --orange-ink:#FFB47A;
+  --btn-bg:#FF9A4D; --btn-fg:#2A1838; --good:#5FD3A0; --bad:#FF8A80; --focus:#FF9A4D;
+  --sel-bg:#5C3A18; --cw-word:#4A2D6B; --cw-cur:#6B4620; --wrong:#5A2A2A; --block:#12091B;
+  color-scheme:dark;
+}
+
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.55;
+  padding-inline:16px;padding-block:28px 56px}
+*{box-sizing:border-box}
+.wrap{max-width:820px;margin-inline:auto;display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{margin:0;text-wrap:balance}
+p{margin:0}
+.kicker{font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--orange-ink)}
+h1{font-family:var(--font-display);font-weight:700;text-transform:uppercase;letter-spacing:.01em;
+  font-size:clamp(2.8rem,10vw,4.8rem);line-height:.95;margin-top:6px}
+.tape{height:12px;margin-block:14px 16px;
+  background:repeating-linear-gradient(-45deg,var(--navy) 0 14px,var(--teal) 14px 28px)}
+.lede{max-width:62ch}
+.lede + .lede{margin-top:8px;color:var(--muted)}
+
+.field{display:flex;flex-direction:column;gap:4px}
+.field label,.lbl{font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+select,input[type=text],input[type=password]{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);
+  border-radius:4px;padding:9px 11px;min-width:0;max-width:100%}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--btn-bg);color:var(--btn-fg);border:0;border-radius:4px;padding:9px 18px;font-weight:700;letter-spacing:.02em}
+.btn:hover{filter:brightness(1.08)}
+.btn-quiet{background:transparent;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:8px 14px;font-weight:600}
+.btn-quiet:hover:not(:disabled){color:var(--ink);border-color:var(--muted)}
+button:disabled{opacity:.6;cursor:default}
+body:not(.teacher) .t-only{display:none}
+
+.tabs{display:flex;flex-wrap:wrap;gap:6px;border-bottom:2px solid var(--line)}
+.tab{background:transparent;border:0;border-bottom:4px solid transparent;margin-bottom:-2px;padding:10px 16px 8px;
+  font-family:var(--font-display);font-weight:700;font-size:1.35rem;text-transform:uppercase;letter-spacing:.03em;color:var(--muted)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--orange)}
+.tab:hover{color:var(--ink)}
+
+.panel{display:flex;flex-direction:column;gap:14px}
+.panel[hidden]{display:none}
+.opts{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center}
+.opts label.chk{display:flex;gap:7px;align-items:center;font-weight:600}
+.status{font-weight:600;min-height:1.5em}
+.status.good{color:var(--good)}
+.note{color:var(--muted);font-size:.92rem}
+
+/* teacher gate */
+.tbanner{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;border:2px solid var(--orange);
+  background:var(--surface);border-radius:6px;padding:8px 12px;font-weight:600}
+.tbanner[hidden]{display:none}
+.foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:.85rem;color:var(--muted)}
+.foot .link{background:none;border:0;color:var(--muted);text-decoration:underline;padding:0}
+.tform{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tform[hidden]{display:none}
+.tform input{width:200px}
+
+/* word search */
+.ws{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+.ws-grid{flex:1 1 340px;max-width:540px;display:grid;grid-template-columns:repeat(14,1fr);gap:2px;
+  touch-action:none;user-select:none;-webkit-user-select:none;background:var(--line);padding:2px;border-radius:4px}
+.ws-cell{aspect-ratio:1;display:grid;place-items:center;background:var(--surface);font-family:var(--font-mono);
+  font-weight:600;font-size:clamp(.78rem,3.1vw,1.1rem);cursor:pointer;min-width:0}
+.ws-cell.sel{background:var(--sel-bg)}
+.ws-cell.found{background:var(--teal-soft);color:var(--ink);font-weight:700;box-shadow:inset 0 0 0 1px var(--teal)}
+.ws-cell.hint{outline:3px solid var(--orange);outline-offset:-3px}
+.ws-cell.teach{box-shadow:inset 0 0 0 2px var(--orange)}
+.ws-list{flex:1 1 200px;min-width:0;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.ws-list li{font-family:var(--font-mono);font-weight:600;font-size:.92rem;padding:5px 9px;background:var(--surface);
+  border:1px solid var(--line);border-radius:4px;overflow-wrap:anywhere}
+.ws-list.clues li{font-family:var(--font-body);font-weight:400;font-size:.95rem;line-height:1.35}
+.ws-list li.done{color:var(--muted);background:var(--teal-soft);border-color:var(--teal)}
+.ws-list li.done .w{text-decoration:line-through}
+.ws-list li.done .rev{font-family:var(--font-mono);font-weight:700;color:var(--ink)}
+
+/* crossword */
+.cw{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+.cw-left{flex:1 1 340px;min-width:0;display:flex;flex-direction:column;gap:10px}
+.cw-banner{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:8px 12px;min-height:3.2em;font-weight:600}
+.cw-banner b{font-family:var(--font-mono);color:var(--orange-ink);margin-right:6px}
+.cw-grid{display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:2px;background:var(--block);padding:2px;
+  max-width:calc(var(--cols) * 44px);border-radius:3px}
+.cw-cell{position:relative;aspect-ratio:1;background:var(--surface);min-width:0}
+.cw-cell.blk{background:var(--block)}
+.cw-cell.inword{background:var(--cw-word)}
+.cw-cell.cur{background:var(--cw-cur)}
+.cw-cell.wrong{background:var(--wrong)}
+.cw-cell .n{position:absolute;left:2px;top:0;font-size:.6rem;line-height:1.2;color:var(--muted);font-family:var(--font-mono);pointer-events:none}
+.cw-cell input{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent;color:var(--ink);
+  text-align:center;text-transform:uppercase;font:600 16px var(--font-mono);padding:6px 0 0;border-radius:0;caret-color:transparent}
+.cw-cell input:focus-visible{outline:2px solid var(--orange);outline-offset:-2px}
+.cw-clues{flex:1 1 260px;min-width:0;display:flex;flex-direction:column;gap:14px}
+.cw-clues h3{font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-family:var(--font-body)}
+.cw-clues ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.cw-clues button{width:100%;text-align:left;background:transparent;border:0;border-radius:3px;padding:5px 8px;color:var(--ink);font-size:.93rem;line-height:1.35}
+.cw-clues button:hover{background:var(--surface-2)}
+.cw-clues button.cur{background:var(--cw-cur)}
+.cw-clues button.done{color:var(--muted);text-decoration:line-through}
+.cw-clues .num{font-family:var(--font-mono);font-weight:600;margin-right:6px}
+
+/* scramble */
+.sc{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px 18px;display:flex;flex-direction:column;gap:14px;max-width:620px}
+.sc[hidden]{display:none}
+.sc-letters{display:flex;flex-wrap:wrap;gap:6px}
+.sc-letters span{width:2.1rem;height:2.5rem;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);
+  border-radius:4px;font-family:var(--font-mono);font-weight:600;font-size:1.3rem}
+.sc-clue{max-width:60ch}
+.sc-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.sc-row input{width:min(100%,260px);font-family:var(--font-mono);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+
+/* hangman: a beaker fills with each wrong guess */
+.hm{display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start}
+.hm-fig{margin:0;flex:0 0 190px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 10px 8px;text-align:center}
+.hm-fig svg{display:block;width:100%;height:auto}
+.hm-fig figcaption{font-family:var(--font-mono);font-weight:600;font-size:.85rem;color:var(--muted)}
+.bk-out{fill:none;stroke:var(--muted);stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.bk-tick{stroke:var(--muted);stroke-width:2}
+.bk-liq{fill:var(--teal);opacity:.85;transition:y .35s,height .35s}
+.bk-lost .bk-liq{fill:var(--orange)}
+.bk-drip{fill:var(--orange);display:none}
+.bk-lost .bk-drip{display:block}
+.hm-main{flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:14px}
+.hm-word{display:flex;flex-wrap:wrap;gap:6px}
+.hm-word span{width:2rem;height:2.5rem;display:grid;place-items:center;border-bottom:3px solid var(--ink);
+  font-family:var(--font-mono);font-weight:600;font-size:1.5rem}
+.hm-word span.miss{color:var(--orange-ink);border-bottom-color:var(--orange)}
+.hm-clue{max-width:60ch;min-height:3em}
+.hm-keys{display:flex;flex-wrap:wrap;gap:6px;max-width:520px}
+.hm-keys button{width:2.4rem;height:2.4rem;padding:0;background:var(--surface);color:var(--ink);border:1px solid var(--line);
+  border-radius:4px;font-family:var(--font-mono);font-weight:600;font-size:1rem}
+.hm-keys button:hover:not(:disabled){border-color:var(--teal)}
+.hm-keys button.ok{background:var(--teal-soft);border-color:var(--teal);opacity:1}
+.hm-keys button.no{background:var(--wrong);border-color:var(--bad);opacity:1;text-decoration:line-through}
+
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+/* scoreboard */
+.sb{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border:2px solid var(--navy);
+  border-radius:6px;padding:8px 14px;display:flex;flex-wrap:wrap;gap:6px 20px;align-items:center}
+.sb-total{display:flex;align-items:baseline;gap:10px}
+.sb-total .lbl{white-space:nowrap}
+.sb-num{font-family:var(--font-display);font-weight:700;font-size:2.4rem;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink)}
+.sb-num.bump{animation:bump .35s}
+@keyframes bump{40%{transform:scale(1.18);color:var(--orange-ink)}}
+.sb-parts{display:flex;flex-wrap:wrap;gap:2px 16px;font-size:.88rem;color:var(--muted)}
+.sb-parts b{color:var(--ink);font-family:var(--font-mono);font-variant-numeric:tabular-nums;margin-left:4px}
+.sb-last{flex:1 1 200px;min-width:0;font-weight:600;font-size:.92rem;min-height:1.4em;color:var(--muted)}
+.sb-last.up{color:var(--good)}
+.sb-last.down{color:var(--bad)}
+.sb-actions{margin-left:auto;display:flex;flex-wrap:wrap;gap:8px}
+.reset{background:var(--surface);border:2px solid var(--bad);border-radius:6px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.reset[hidden]{display:none}
+.reset h2{font-family:var(--font-display);font-weight:700;text-transform:uppercase;letter-spacing:.02em;font-size:1.3rem;color:var(--bad)}
+.reset p{margin:0}
+.btn-danger{background:transparent;color:var(--bad);border:2px solid var(--bad);border-radius:4px;padding:8px 14px;font-weight:700}
+.btn-danger:hover:not(:disabled){background:var(--bad);color:var(--surface)}
+.btn-danger:disabled{opacity:.45;cursor:not-allowed}
+.final{background:var(--surface);border:2px solid var(--orange);border-radius:6px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.final[hidden]{display:none}
+.final h2{font-family:var(--font-display);font-weight:700;text-transform:uppercase;letter-spacing:.02em;font-size:1.6rem}
+.final-num{font-family:var(--font-display);font-weight:700;font-size:4rem;line-height:1;font-variant-numeric:tabular-nums}
+.final-num small{font-size:1.1rem;font-weight:600;color:var(--muted);letter-spacing:.05em;margin-left:8px;text-transform:uppercase}
+.final-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:0}
+.final-list div{border:1px solid var(--line);border-radius:4px;padding:8px 10px;background:var(--bg)}
+.final-list dt{font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.final-list dd{margin:2px 0 0;font-family:var(--font-mono);font-weight:600;font-size:1.4rem;font-variant-numeric:tabular-nums}
+.rules{border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:10px 14px}
+.rules summary{cursor:pointer;font-weight:700}
+.rg{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-top:12px}
+.rg>div{min-width:0}
+.rg h3{font-family:var(--font-display);font-weight:700;text-transform:uppercase;letter-spacing:.03em;font-size:1.2rem;color:var(--navy);margin-bottom:4px}
+.rg ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:3px;font-size:.92rem}
+.rules .note{margin-top:12px}
+.note.left{margin:0;font-variant-numeric:tabular-nums}
+.sb-num.neg,.sb-parts b.neg,.final-num.neg,.final-list dd.neg{color:var(--bad)}
+.ws-list.clues li{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.ws-list li .rev{font-family:var(--font-mono);font-weight:700;color:var(--orange-ink);display:block}
+.ws-list li.done .rev{display:inline}
+.rv{background:transparent;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:3px 9px;font-size:.82rem;font-weight:600}
+.rv:hover{color:var(--ink);border-color:var(--muted)}
+@media (max-width:420px){.sb-num{font-size:2rem}.final-num{font-size:3.2rem}}
+@media (prefers-reduced-motion: reduce){.shake{animation:none}.bk-liq{transition:none}.sb-num.bump{animation:none}}
+@media (max-width:420px){.tab{padding:9px 10px 7px;font-size:1.2rem}.sc{padding:14px 12px}}
+</style>
+
+<main class="wrap">
+  <div class="tbanner t-only" id="tbanner" hidden>
+    <span>Teacher mode is on. Reveal tools are showing.</span>
+    <button class="btn-quiet" type="button" id="t-lock">Lock</button>
+  </div>
+
+  <header>
+    <div class="kicker">Regular Biology · Puzzle break</div>
+    <h1>Biology Puzzle Break</h1>
+    <div class="tape" aria-hidden="true"></div>
+    <p class="lede">Every puzzle is a fresh mix of terms from Chapters 1 to 5.2, so no two games match.</p>
+    <p class="lede">Nothing is graded or timed. Each puzzle comes with one hint, so save it for when you need it.</p>
+  </header>
+
+  <div class="sb" id="sb" role="group" aria-label="Points">
+    <div class="sb-total"><span class="lbl">Total points</span><span class="sb-num" id="sb-total">0</span></div>
+    <div class="sb-parts">
+      <span>Word search<b id="sb-ws">0</b></span><span>Crossword<b id="sb-cw">0</b></span><span>Scramble<b id="sb-sc">0</b></span><span>Hangman<b id="sb-hm">0</b></span>
+    </div>
+    <div class="sb-last" id="sb-last" role="status" aria-live="polite">Earn points in every puzzle.</div>
+    <div class="sb-actions"><button class="btn-quiet" type="button" id="sb-reset" aria-expanded="false" aria-controls="reset">Reset points</button><button class="btn" type="button" id="sb-final" aria-expanded="false" aria-controls="final">Final score</button></div>
+  </div>
+
+  <section class="reset" id="reset" hidden role="group" aria-labelledby="reset-h">
+    <h2 id="reset-h">Reset points</h2>
+    <p id="reset-msg" aria-live="polite"></p>
+    <div class="opts" id="reset-step1">
+      <button class="btn-danger" type="button" id="reset-continue">Continue</button>
+      <button class="btn" type="button" id="reset-cancel1">Cancel</button>
+    </div>
+    <div class="opts" id="reset-step2" hidden>
+      <button class="btn-danger" type="button" id="reset-pts" disabled>Erase points only</button>
+      <button class="btn-danger" type="button" id="reset-all" disabled>Erase points and used questions</button>
+      <button class="btn" type="button" id="reset-cancel2">Cancel</button>
+    </div>
+    <p class="note" id="reset-note"></p>
+  </section>
+
+  <section class="final" id="final" hidden aria-labelledby="final-h">
+    <h2 id="final-h">Final score</h2>
+    <div class="final-num"><span id="final-num">0</span><small>points</small></div>
+    <dl class="final-list">
+      <div><dt>Word search</dt><dd id="f-ws">0</dd></div>
+      <div><dt>Crossword</dt><dd id="f-cw">0</dd></div>
+      <div><dt>Scramble</dt><dd id="f-sc">0</dd></div>
+      <div><dt>Hangman</dt><dd id="f-hm">0</dd></div>
+    </dl>
+    <div class="opts">
+      <button class="btn" type="button" id="final-close">Keep playing</button>
+      <button class="btn-quiet" type="button" id="final-reset">Reset points</button>
+    </div>
+    <p class="note">Your points and used questions are saved on this device until you reset them.</p>
+  </section>
+
+  <details class="rules">
+    <summary>How points work</summary>
+    <div class="rg">
+      <div><h3>Word search</h3><ul>
+        <li>Each word found: Easy 4, Medium 6, Hard 8</li>
+        <li>All words found with no reveals: bonus of 10, 15 or 20</li>
+        <li>Reveal one word from its clue: &minus;3, and that word earns no points</li>
+        <li>Show the whole word list: &minus;20 (once per grid)</li>
+        <li>Hint: &minus;2</li></ul></div>
+      <div><h3>Crossword</h3><ul>
+        <li>Each word finished: Short 6, Standard 7, Long 8</li>
+        <li>Whole puzzle finished: bonus of 15% of the word points</li>
+        <li>Check that finds a wrong letter: &minus;1</li>
+        <li>Hint: &minus;2</li></ul></div>
+      <div><h3>Scramble</h3><ul>
+        <li>Each word: Easy 8, Medium 12, Hard 16</li>
+        <li>Each wrong try takes 1 point off that word</li>
+        <li>Hint: &minus;3</li></ul></div>
+      <div><h3>Hangman</h3><ul>
+        <li>Each word: Easy 8, Medium 12, Hard 16</li>
+        <li>Plus 1 for every wrong guess you did not use</li>
+        <li>Clue hidden: +3 a word</li>
+        <li>Hint: &minus;3</li></ul></div>
+    </div>
+    <p class="note">A middle-level game with no help is worth about 100 points. A clue that starts with "Tricky:" gives 2 extra points when you solve it. Points can go below zero, so careless guessing and too many reveals can leave you with a negative score.</p>
+    <p class="note">Every question scores once. A question you solved, revealed or had shown never comes back, so each new puzzle brings new questions. Word search and crossword can use the same answer again, but only with a different clue. Scramble and hangman never repeat a word. When the questions run out, use Reset points and choose to erase the used questions too. Reset points asks you to confirm twice.</p>
+  </details>
+
+  <div class="tabs" role="tablist" aria-label="Puzzles">
+    <button class="tab" role="tab" id="tab-ws" aria-selected="true" aria-controls="p-ws" type="button">Word search</button>
+    <button class="tab" role="tab" id="tab-cw" aria-selected="false" aria-controls="p-cw" type="button">Crossword</button>
+    <button class="tab" role="tab" id="tab-sc" aria-selected="false" aria-controls="p-sc" type="button">Scramble</button>
+    <button class="tab" role="tab" id="tab-hm" aria-selected="false" aria-controls="p-hm" type="button">Hangman</button>
+  </div>
+
+  <section class="panel" id="p-ws" role="tabpanel" aria-labelledby="tab-ws">
+    <div class="opts">
+      <div class="field">
+        <label for="ws-level">Difficulty</label>
+        <select id="ws-level">
+          <option value="easy">Easy: across and down · 4 pts a word</option>
+          <option value="med" selected>Medium: adds diagonals · 6 pts a word</option>
+          <option value="hard">Hard: any direction, backwards too · 8 pts a word</option>
+        </select>
+      </div>
+      <button class="btn-quiet" type="button" id="ws-list-btn">Show word list (&minus;20)</button>
+      <button class="btn-quiet" type="button" id="ws-hint" data-cost="2">Hint (1 left, &minus;2)</button>
+      <button class="btn-quiet" type="button" id="ws-new">New grid</button>
+      <button class="btn-quiet t-only" type="button" id="ws-show">Show all words</button>
+    </div>
+    <p class="note left" id="left-ws"></p>
+    <div class="status" id="ws-status" role="status" aria-live="polite"></div>
+    <div class="ws">
+      <div class="ws-grid" id="ws-grid" aria-label="Word search grid. Drag across letters to select a word."></div>
+      <ul class="ws-list" id="ws-list"></ul>
+    </div>
+    <p class="note">Press on the first letter, drag to the last letter, then let go. Words run in a straight line. Read each clue to find its word. Stuck? Tap Reveal word under a clue.</p>
+  </section>
+
+  <section class="panel" id="p-cw" role="tabpanel" aria-labelledby="tab-cw" hidden>
+    <div class="opts">
+      <div class="field">
+        <label for="cw-size">Size</label>
+        <select id="cw-size">
+          <option value="short">Short: 8 words · 6 pts a word</option>
+          <option value="std" selected>Standard: 12 words · 7 pts a word</option>
+          <option value="long">Long: about 14 words · 8 pts a word</option>
+        </select>
+      </div>
+    </div>
+    <p class="note left" id="left-cw"></p>
+    <div class="status" id="cw-status" role="status" aria-live="polite"></div>
+    <div class="cw">
+      <div class="cw-left">
+        <div class="cw-banner" id="cw-banner" aria-live="polite"></div>
+        <div class="cw-grid" id="cw-grid"></div>
+        <div class="opts">
+          <button class="btn" type="button" id="cw-check">Check (&minus;1 if wrong)</button>
+          <button class="btn-quiet" type="button" id="cw-hint" data-cost="2">Hint (1 left, &minus;2)</button>
+          <button class="btn-quiet" type="button" id="cw-clear">Clear</button>
+          <button class="btn-quiet" type="button" id="cw-new">New puzzle</button>
+        </div>
+        <div class="opts t-only">
+          <button class="btn-quiet" type="button" id="cw-rl">Reveal letter</button>
+          <button class="btn-quiet" type="button" id="cw-rw">Reveal word</button>
+          <button class="btn-quiet" type="button" id="cw-ra">Reveal all</button>
+        </div>
+        <p class="note">Click a square to type. Click it again to switch between across and down. Arrow keys move around. Hint fills in the selected square.</p>
+      </div>
+      <div class="cw-clues">
+        <div><h3>Across</h3><ol id="cw-across"></ol></div>
+        <div><h3>Down</h3><ol id="cw-down"></ol></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="p-sc" role="tabpanel" aria-labelledby="tab-sc" hidden>
+    <div class="opts">
+      <div class="field">
+        <label for="sc-level">Difficulty</label>
+        <select id="sc-level">
+          <option value="easy">Easy: 4 to 7 letters · 8 pts a word</option>
+          <option value="med" selected>Medium: 8 to 10 letters · 12 pts a word</option>
+          <option value="hard">Hard: 11 or more letters · 16 pts a word</option>
+        </select>
+      </div>
+    </div>
+    <p class="note left" id="left-sc"></p>
+    <div class="status" id="sc-status" role="status" aria-live="polite"></div>
+    <div class="sc" id="sc-card">
+      <div class="lbl" id="sc-count"></div>
+      <div class="sc-letters" id="sc-letters" aria-live="polite"></div>
+      <p class="sc-clue" id="sc-clue"></p>
+      <div class="sc-row">
+        <label for="sc-in" class="lbl" style="width:100%">Your word</label>
+        <input type="text" id="sc-in" autocomplete="off" autocapitalize="characters" spellcheck="false">
+        <button class="btn" type="button" id="sc-check">Check</button>
+        <button class="btn-quiet" type="button" id="sc-hint" data-cost="3">Hint (1 left, &minus;3)</button>
+        <button class="btn-quiet" type="button" id="sc-skip">Skip</button>
+        <button class="btn-quiet t-only" type="button" id="sc-ans">Show answer</button>
+      </div>
+      <div class="note" id="sc-hinttext" aria-live="polite"></div>
+    </div>
+    <div><button class="btn-quiet" type="button" id="sc-again">New set</button></div>
+  </section>
+
+  <section class="panel" id="p-hm" role="tabpanel" aria-labelledby="tab-hm" hidden>
+    <div class="opts">
+      <div class="field">
+        <label for="hm-level">Difficulty</label>
+        <select id="hm-level">
+          <option value="easy">Easy: 8 wrong guesses · 8 pts a word</option>
+          <option value="med" selected>Medium: 6 wrong guesses · 12 pts a word</option>
+          <option value="hard">Hard: 4 wrong guesses · 16 pts a word</option>
+        </select>
+      </div>
+      <label class="chk"><input type="checkbox" id="hm-clue" checked> Show the clue (hide it for +3 a word)</label>
+      <button class="btn-quiet" type="button" id="hm-hint" data-cost="3">Hint (1 left, &minus;3)</button>
+      <button class="btn-quiet" type="button" id="hm-next">Next word</button>
+      <button class="btn-quiet t-only" type="button" id="hm-reveal">Reveal word</button>
+    </div>
+    <p class="note left" id="left-hm"></p>
+    <div class="status" id="hm-status" role="status" aria-live="polite"></div>
+    <div class="hm">
+      <figure class="hm-fig">
+        <svg viewBox="0 0 200 220" id="hm-svg" role="img" aria-label="Beaker that fills with liquid as wrong guesses add up">
+          <defs><clipPath id="hm-clip"><path d="M62,30 L62,180 Q62,194 76,194 L124,194 Q138,194 138,180 L138,30 Z"/></clipPath></defs>
+          <rect class="bk-liq" id="hm-liq" x="50" y="178" width="100" height="16" clip-path="url(#hm-clip)"/>
+          <path class="bk-out" d="M52,24 L62,30 L62,180 Q62,194 76,194 L124,194 Q138,194 138,180 L138,30 L148,24"/>
+          <line class="bk-tick" x1="62" x2="76" y1="140" y2="140"/>
+          <line class="bk-tick" x1="62" x2="76" y1="105" y2="105"/>
+          <line class="bk-tick" x1="62" x2="76" y1="68" y2="68"/>
+          <circle class="bk-drip" cx="152" cy="46" r="5"/>
+          <circle class="bk-drip" cx="156" cy="74" r="4"/>
+          <circle class="bk-drip" cx="48" cy="60" r="4"/>
+        </svg>
+        <figcaption id="hm-lives"></figcaption>
+      </figure>
+      <div class="hm-main">
+        <div class="lbl" id="hm-count"></div>
+        <div class="hm-word" id="hm-word" aria-live="polite"></div>
+        <p class="hm-clue" id="hm-clue-text"></p>
+        <div class="hm-keys" id="hm-keys" role="group" aria-label="Letters"></div>
+        <p class="note">Type on your keyboard or tap the letters. When you run out of wrong guesses, the beaker overflows.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <button class="link" type="button" id="t-open">Teacher</button>
+    <div class="tform" id="t-form" hidden>
+      <label for="t-code" class="lbl">Teacher code</label>
+      <input type="password" id="t-code" autocomplete="off">
+      <button class="btn-quiet" type="button" id="t-go">Unlock</button>
+      <span id="t-msg" role="status" aria-live="polite"></span>
+    </div>
+  </div>
+</main>
+
+<script>
+(function(){
+  var TERMS = {
+    c1: [
+      ["BIOLOGY","The study of life"],
+      ["OBSERVATION","Using your senses to gather information"],
+      ["INFERENCE","A logical conclusion based on what you observed"],
+      ["HYPOTHESIS","A testable explanation for a set of observations"],
+      ["EXPERIMENT","A controlled test of a hypothesis"],
+      ["VARIABLE","A factor that can change in an experiment"],
+      ["INDEPENDENT","___ variable: the one the scientist changes on purpose"],
+      ["DEPENDENT","___ variable: the one that changes in response"],
+      ["CONTROL","___ group: the group that does not get the treatment"],
+      ["DATA","Information collected in an experiment"],
+      ["QUANTITATIVE","Data that uses numbers"],
+      ["QUALITATIVE","Data that uses descriptions, not numbers"],
+      ["THEORY","A well-tested explanation that ties together many observations"],
+      ["PEER","___ review: other scientists check your work before it is published"],
+      ["BIAS","A personal opinion that can slant results"],
+      ["SAMPLE","A small group used to represent a larger group"],
+      ["SPONTANEOUS","___ generation: the old idea that life comes from non-life"],
+      ["ORGANISM","Any individual living thing"],
+      ["CELL","The basic unit of life"],
+      ["TISSUE","Group of similar cells that do one job"],
+      ["HOMEOSTASIS","Keeping a stable internal environment"],
+      ["METABOLISM","All the chemical reactions in an organism"],
+      ["STIMULUS","A signal that an organism reacts to"],
+      ["EVOLUTION","Change in living things over time"],
+      ["ASEXUAL","___ reproduction: one parent, offspring are identical to it"],
+      ["REPRODUCTION","How living things make more of their own kind"],
+      ["CONCLUSION","What the data show about whether the hypothesis was supported"],
+      ["SCIENCE","An organized way of studying the natural world"],
+      ["MODEL","A representation of something too big, small or complex to see directly"],
+      ["PREDICTION","What you expect to happen if your hypothesis is correct"],
+      ["EVIDENCE","Data and observations used to support a claim"],
+      ["CONTROLLED","___ variable: a factor kept the same in every group"],
+      ["SEXUAL","___ reproduction: two parents, and offspring differ from both"],
+      ["DEVELOPMENT","Changes in an organism as it grows and matures"],
+      ["ADAPTATION","An inherited trait that helps an organism survive"],
+      ["ORGANELLE","Tiny structure inside a cell that does a special job"],
+      ["ORGAN","Body part made of tissues that work together"],
+      ["RESPONSE","What an organism does when it detects a stimulus"],
+      ["TECHNOLOGY","Using scientific knowledge to solve practical problems"],
+      ["QUESTION","What a scientist asks before forming a hypothesis"],
+      ["DNA","Molecule that carries genetic information"],
+      ["INFERENCE","Footprints in the mud lead you to say an animal walked by. This kind of conclusion is an ___",1],
+      ["OBSERVATION","'The leaf is green' is one of these. 'The leaf is healthy' is not",1],
+      ["HYPOTHESIS","Must be testable and is often written as an 'If ... then ...' statement",1],
+      ["THEORY","In science it means a well-tested explanation, not just a guess",1],
+      ["DEPENDENT","You change fertilizer and measure plant height. Height is this variable",1],
+      ["INDEPENDENT","You change the amount of fertilizer on purpose. It is this variable",1],
+      ["CONTROL","One group of bean plants gets plain water while the others get fertilizer. This group is the ___ group",1],
+      ["BIAS","A scientist only reports the results he likes. What problem is this?",1],
+      ["DATA","A list of heights and masses is this. It is a plural word",1],
+      ["HOMEOSTASIS","You sweat when hot and shiver when cold. What is your body keeping stable?",1],
+      ["STIMULUS","Bright light makes your pupil shrink. The light is the ___",1],
+      ["METABOLISM","Digestion and cellular respiration are both part of this",1],
+      ["QUALITATIVE","'The liquid turned blue' is this kind of data",1],
+      ["QUANTITATIVE","'The stem grew 12 cm' is this kind of data",1],
+      ["SPONTANEOUS","Redi's jars of meat and flies disproved ___ generation",1],
+      ["PEER","Experts read your paper and check it before a journal prints it. This is ___ review",1],
+      ["ASEXUAL","A bacterium splits into two identical cells. What type of reproduction is this?",1],
+      ["SEXUAL","Offspring get DNA from two parents and look different from each. What type of reproduction is this?",1],
+      ["EVOLUTION","Populations change over many generations. Individuals do not",1],
+      ["TISSUE","Muscle cells of the same kind working together form this",1],
+      ["ORGANISM","One bacterium and one blue whale are each a single ___",1],
+      ["MODEL","A globe is this kind of tool for studying Earth",1],
+      ["CELL","The smallest unit that can be alive on its own",1],
+      ["EXPERIMENT","Changing only one variable at a time and keeping all others the same",1],
+      ["REPRODUCTION","Needed for a species to continue, but not for one individual to stay alive",1],
+      ["ADAPTATION","A giraffe's long neck is an example, not something it learned during its life",1],
+      ["DNA","A bacterium, a tree and you all use this to store genetic instructions",1],
+      ["UNICELLULAR","Made of only one cell, like a bacterium or an amoeba"],
+      ["UNICELLULAR","A yeast is a living thing made of just one cell. It is described as",1],
+      ["MULTICELLULAR","Made of many cells that work together, like a tree or a dog"],
+      ["MULTICELLULAR","In a human, cells specialize into nerve, muscle and skin cells. Humans are described as",1],
+      ["ORGANIZATION","Levels of ___ in living things go from cells to tissues to organs to organisms"],
+      ["REPLICATION","Repeating an experiment to see whether you get the same results"],
+      ["REPLICATION","Three different labs run the same test and get matching data. This strengthens the ___ of the results",1],
+      ["EXPERIMENTAL","___ group: the group that receives the treatment being tested"],
+      ["EXPERIMENTAL","Plants in this group get fertilizer. Plants in the control group do not",1],
+      ["MICROORGANISM","A living thing too small to see without a microscope"],
+      ["CHARACTERISTIC","A feature, such as growing or using energy, that all living things share"],
+      ["MEASUREMENT","A number plus a unit, such as 5 cm or 12 g"],
+      ["INVESTIGATION","A careful study done to answer a question, such as a lab experiment"],
+      ["MICROSCOPE","Tool that magnifies objects too small to see with your eyes"],
+      ["METRIC","___ system: the units scientists use, such as meters, liters and grams"],
+      ["CURIOSITY","A scientific attitude: wanting to find out why or how"],
+      ["SKEPTICISM","A scientific attitude: asking for evidence before accepting a claim"],
+      ["SKEPTICISM","A scientist hears a surprising claim and asks, 'Where is the proof?' This attitude is",1],
+      ["CREATIVITY","A scientific attitude that helps produce new ideas and new ways to test them"],
+      ["PASTEUR","His swan-neck flask experiment showed that microorganisms do not appear from nothing"],
+      ["REDI","Italian doctor whose jars of meat, some covered with gauze, tested spontaneous generation"],
+      ["GENERATION","Spontaneous ___ was the old idea that living things arise from nonliving matter"],
+      ["SCIENTIFIC","___ method: a series of steps used to answer questions"],
+      ["SCIENTIST","A person who asks questions about the natural world and tests the answers"],
+      ["FLASK","Glass container with a narrow neck, used in Pasteur's experiment"],
+      ["TRAIT","A feature of an organism, such as eye color, that can be inherited"],
+      ["OFFSPRING","The young produced by a parent organism"],
+      ["PARENT","An organism that produces offspring"],
+      ["GENE","A section of DNA that carries the instructions for a trait"],
+      ["HEREDITY","The passing of traits from parents to offspring"],
+      ["DARWIN","Naturalist who proposed that species change through natural selection"],
+      ["SELECTION","Natural ___: organisms with helpful traits survive and reproduce more"],
+      ["SYSTEM","A group of parts that work together, like your digestive one"],
+      ["GRAPH","A picture of data that uses bars, lines or points"],
+      ["SAFETY","Lab ___ rules include wearing eye protection and tying back long hair"],
+      ["LABORATORY","Room where scientists carry out experiments"],
+      ["JOURNAL","Publication where reviewed scientific papers are printed"],
+      ["COMMUNICATION","Sharing results with other scientists in papers and talks"],
+      ["INTERPRETATION","Explaining what the data mean"],
+      ["CONTROLGROUP","The group in an experiment that does not get the treatment, used for comparison (two words written as one)"],
+      ["CONTROLGROUP","One tray of seedlings gets only plain water while the others get fertilizer. This tray is the (two words written as one)",1],
+      ["LIVINGTHINGS","Organisms: they use energy, grow, reproduce and respond to their surroundings (two words written as one)"],
+      ["CELL","The basic unit of life, from a bacterium to a blue whale"],
+      ["CELL","A skin one and a nerve one look different, but both are the basic unit of life",1],
+      ["OBSERVATION","A thermometer reads 25 degrees Celsius. This number is a(n) ___, not an inference",1],
+      ["HYPOTHESIS","If plants get more light, then they will grow taller. This statement is a",1],
+      ["VARIABLE","Temperature, light and water can each be one of these in an experiment",1],
+      ["CONCLUSION","The plants with fertilizer grew taller, so the hypothesis was supported. This statement is the",1],
+      ["QUESTION","'Why do plants lean toward a window?' is an example of what a scientist asks first",1],
+      ["SAMPLE","Testing only 3 plants instead of 300 gives a very small one",1],
+      ["TECHNOLOGY","A microscope is an example of this kind of tool",1],
+      ["ORGAN","The heart, a lung and the stomach are each one of these",1],
+      ["ORGANELLE","The nucleus and the mitochondria are examples of this inside a cell",1],
+      ["RESPONSE","A dog drools when it smells food. The drooling is the",1],
+      ["DEVELOPMENT","A tadpole turns into a frog. This change over a lifetime is called",1],
+      ["ADAPTATION","A cactus's spines reduce water loss. This is an example of an",1],
+      ["EVOLUTION","Antibiotic-resistant bacteria becoming common over time is an example of",1],
+      ["EVIDENCE","Fossils and DNA comparisons are used as this to back up a claim",1],
+      ["SPONTANEOUS","Pasteur's flasks stayed clear, which disproved ___ generation",1],
+      ["BIOLOGY","The science that studies living things and how they interact"],
+      ["DATA","Facts and numbers gathered during an experiment"],
+      ["DEPENDENT","The variable that is measured at the end of an experiment",1],
+      ["THEORY","Cell ___ and evolution by natural selection are both examples of this",1],
+      ["SEXUAL","Two parents each contribute genetic material to the offspring",1],
+      ["ASEXUAL","A single parent makes offspring identical to itself",1],
+      ["TISSUE","Muscle, nervous and epithelial are types of this",1],
+      ["HOMEOSTASIS","Body temperature staying near 37 degrees Celsius is an example of this",1],
+      ["STIMULUS","A loud noise makes you jump. The noise is the",1],
+      ["METABOLISM","All the chemical reactions that build up and break down materials in a cell"],
+      ["MODEL","A diagram or computer simulation of a system that is too big or too small to study directly",1],
+      ["REPRODUCTIVE","Relating to the production of offspring"],
+      ["ENVIRONMENTAL","Relating to the surroundings of an organism, such as temperature or food supply"],
+      ["DATACOLLECTION","Gathering measurements and observations during an experiment (two words written as one)"],
+      ["SAMPLESIZE","The number of individuals tested; a larger one makes results more reliable (two words written as one)"],
+      ["SAMPLESIZE","Testing 300 plants instead of 3 changes this number (two words written as one)",1]
+    ],
+    c2: [
+      ["ATOM","Smallest unit of an element"],
+      ["NUCLEUS","Center of an atom, holding protons and neutrons"],
+      ["PROTON","Positive particle in the nucleus"],
+      ["NEUTRON","Particle in the nucleus with no charge"],
+      ["ELECTRON","Negative particle that moves around the nucleus"],
+      ["ELEMENT","Pure substance made of only one kind of atom"],
+      ["ISOTOPE","Atoms of one element with different numbers of neutrons"],
+      ["COMPOUND","Substance made of two or more elements bonded together"],
+      ["MOLECULE","Group of atoms held together by covalent bonds"],
+      ["IONIC","Bond formed when electrons are transferred"],
+      ["COVALENT","Bond formed when electrons are shared"],
+      ["COHESION","Attraction between molecules of the same substance"],
+      ["ADHESION","Attraction between molecules of different substances"],
+      ["POLAR","Having a slightly positive end and a slightly negative end, like water"],
+      ["HYDROGEN","___ bond: weak attraction between water molecules"],
+      ["MIXTURE","Two or more substances physically mixed together"],
+      ["SOLUTION","Mixture where one substance dissolves evenly in another"],
+      ["SUSPENSION","Mixture of water and particles that do not dissolve"],
+      ["SOLUTE","The substance that gets dissolved"],
+      ["SOLVENT","The substance that does the dissolving"],
+      ["ACID","Solution with a pH below 7"],
+      ["BASE","Solution with a pH above 7"],
+      ["CARBOHYDRATE","Sugars and starches, the main energy source"],
+      ["LIPID","Fats, oils and waxes"],
+      ["PROTEIN","Macromolecule made of amino acids"],
+      ["NUCLEIC","___ acid: DNA and RNA"],
+      ["MONOMER","One small unit that can join with others"],
+      ["POLYMER","Large molecule made of many repeating units"],
+      ["MACROMOLECULE","Giant molecule made of thousands of atoms"],
+      ["ENZYME","Protein that speeds up chemical reactions"],
+      ["CATALYST","Substance that speeds up a reaction"],
+      ["SUBSTRATE","The reactant an enzyme acts on"],
+      ["ACTIVATION","___ energy: the energy needed to start a reaction"],
+      ["REACTANT","Starting substance in a chemical reaction"],
+      ["PRODUCT","Substance formed by a chemical reaction"],
+      ["VANDERWAALS","___ forces: weak attractions between molecules (three words written as one)"],
+      ["WATER","The molecule H2O, which is polar and covers most of Earth"],
+      ["BOND","A force that holds atoms together"],
+      ["ATOMIC","___ number: the number of protons in an atom"],
+      ["MASS","___ number: protons plus neutrons"],
+      ["RADIOACTIVE","Describes an isotope whose nucleus breaks down and gives off energy"],
+      ["ION","An atom with a positive or negative charge"],
+      ["NEUTRAL","Describes an atom with equal numbers of protons and electrons, or a pH of 7"],
+      ["BUFFER","Weak acid or base that keeps pH from changing much"],
+      ["GLUCOSE","Simple sugar that cells use for energy"],
+      ["STARCH","Carbohydrate that plants use to store energy"],
+      ["CELLULOSE","Carbohydrate that makes up plant cell walls"],
+      ["AMINO","___ acid: building block of proteins"],
+      ["NUCLEOTIDE","Monomer that builds nucleic acids"],
+      ["SATURATED","Fat with only single bonds between its carbons"],
+      ["UNSATURATED","Fat with at least one double bond between its carbons"],
+      ["CHEMICAL","___ reaction: a process that changes substances into new ones"],
+      ["ACTIVE","___ site: the spot on an enzyme where the substrate fits"],
+      ["OXYGEN","Element with 8 protons that you need to breathe"],
+      ["ISOTOPE","Carbon-12 and carbon-14 have different numbers of neutrons. They are these",1],
+      ["IONIC","NaCl forms when sodium gives an electron to chlorine. What bond is this?",1],
+      ["COVALENT","The atoms in a water molecule share electrons. What bond is this?",1],
+      ["POLAR","Oxygen pulls electrons harder than hydrogen does, so water is this",1],
+      ["COHESION","Water beads up on a leaf because water molecules stick together. This is",1],
+      ["ADHESION","Water climbs up a thin glass tube because it sticks to the glass. This is",1],
+      ["ACID","Lemon juice has a pH of 2. What kind of solution is it?",1],
+      ["BASE","Soap has a pH of 10. What kind of solution is it?",1],
+      ["SOLVENT","In salt water, the water is the ___",1],
+      ["SOLUTE","In salt water, the salt is the ___",1],
+      ["SUSPENSION","Muddy water settles if you leave it alone. It is a ___",1],
+      ["ENZYME","Its name often ends in -ase and it is not used up in the reaction",1],
+      ["SUBSTRATE","Sucrose is this for the enzyme sucrase",1],
+      ["ACTIVATION","Enzymes lower this energy, so reactions start more easily",1],
+      ["PROTEIN","Hemoglobin, antibodies and most enzymes belong to this group",1],
+      ["LIPID","Fats and oils do not mix with water. They belong to this group",1],
+      ["CARBOHYDRATE","Bread, rice and pasta are rich in this macromolecule",1],
+      ["ELEMENT","Carbon and oxygen are these, but carbon dioxide is not",1],
+      ["COMPOUND","Water and salt are these, but oxygen gas is not",1],
+      ["MIXTURE","Sand and iron filings can be pulled apart with a magnet. Together they form a ___",1],
+      ["POLYMER","A whole protein is one. A single amino acid is not",1],
+      ["MONOMER","A single amino acid is one. A whole protein is not",1],
+      ["ELECTRON","The tiny particle that is shared in a covalent bond",1],
+      ["NEUTRON","Atoms of one element can have different numbers of this particle",1],
+      ["BUFFER","Chemicals in blood that keep pH steady",1],
+      ["MOLECULE","O2 and H2O both count as one, but a single O atom does not",1],
+      ["HYDROGEN","A weak attraction between the slightly positive H of one water molecule and the negative O of another is a ___ bond",1],
+      ["NUCLEIC","DNA and RNA belong to this type of acid",1],
+      ["MONOSACCHARIDE","A single sugar molecule, such as glucose or fructose"],
+      ["GLYCOGEN","Carbohydrate that animals use to store extra glucose"],
+      ["SUCROSE","Table sugar, made of one glucose and one fructose"],
+      ["FRUCTOSE","The sugar that gives fruit its sweet taste"],
+      ["HYDROXIDE","The OH ion that makes a solution basic"],
+      ["CAPILLARY","___ action: water rises in a narrow tube because of adhesion and cohesion"],
+      ["ORGANIC","Describes compounds that contain carbon bonded to hydrogen"],
+      ["INORGANIC","Describes compounds without a carbon-hydrogen backbone, like water and salt"],
+      ["CHARGE","Protons are positive and electrons are negative. Each carries an electric ___"],
+      ["PEPTIDE","___ bond: the bond that links amino acids together"],
+      ["FATTY","___ acid: a long carbon chain that is part of a lipid"],
+      ["CHEMISTRY","The science of matter and how it changes"],
+      ["SODIUM","Element with symbol Na; it gives up one electron to chlorine"],
+      ["CHLORIDE","The negative ion formed when chlorine gains an electron"],
+      ["CHLORINE","Element with symbol Cl that gains an electron to form an ion"],
+      ["DIOXIDE","Carbon ___ is the gas plants take in for photosynthesis"],
+      ["REACTION","A reactant turns into a product during this process"],
+      ["DISSOLVE","To mix evenly into a liquid, like sugar in tea"],
+      ["CONCENTRATION","The amount of solute in a certain amount of solution"],
+      ["INDICATOR","Chemical that changes color to show whether something is an acid or a base"],
+      ["HEMOGLOBIN","Protein in red blood cells that carries oxygen"],
+      ["FORMULA","H2O is the chemical ___ for water"],
+      ["SYMBOL","One or two letters that stand for an element"],
+      ["PERIODIC","___ table: a chart that organizes all the elements"],
+      ["SUGAR","A simple carbohydrate with a sweet taste"],
+      ["GENETIC","___ information is stored in DNA and RNA"],
+      ["TWENTY","Number of different amino acids found in proteins (spelled out)"],
+      ["SALT","Table ___: the ionic compound NaCl"],
+      ["COVALENTBOND","Bond in which two atoms share electrons (two words written as one)"],
+      ["COVALENTBOND","A carbon atom shares pairs of electrons with four hydrogen atoms in methane. What kind of bond joins them? (two words written as one)",1],
+      ["IONICBOND","Bond formed when one atom gives an electron to another and the two ions attract (two words written as one)"],
+      ["NUCLEICACID","Macromolecule made of nucleotides that stores genetic information (two words written as one)"],
+      ["AMINOACID","The building block, or monomer, of a protein (two words written as one)"],
+      ["HYDROGENBOND","Weak attraction between the positive end of one water molecule and the negative end of another (two words written as one)"],
+      ["CHEMICALBOND","A force that holds atoms together in compounds (two words written as one)"],
+      ["ACTIVESITE","The part of an enzyme where the substrate fits (two words written as one)"],
+      ["PHSCALE","A scale from 0 to 14 that measures how acidic or basic a solution is (two words written as one)"],
+      ["ATOM","The smallest unit of an element that still has that element's properties"],
+      ["NEUTRON","The particle in the nucleus with no electric charge"],
+      ["ELECTRON","Carbon has six of these moving around its nucleus",1],
+      ["PROTON","The number of these in the nucleus gives an atom its atomic number",1],
+      ["ELEMENT","Gold, iron and helium are each one of these",1],
+      ["COMPOUND","Always made of two or more different elements in a fixed ratio",1],
+      ["MOLECULE","Two hydrogen atoms bonded to one oxygen atom make one of these",1],
+      ["ION","A sodium atom that loses an electron becomes a positive one of these",1],
+      ["ISOTOPE","Carbon-14 has extra neutrons compared with carbon-12. What is it called?",1],
+      ["ACID","Gives off hydrogen ions in water and has a pH below 7",1],
+      ["BASE","Slippery, bitter, and has more hydroxide ions than hydrogen ions",1],
+      ["SOLUTION","Salt dissolved evenly in water is an example of this",1],
+      ["MIXTURE","A salad is one: each food keeps its own properties",1],
+      ["SUSPENSION","Blood cells do not dissolve; they stay mixed in the plasma. This mixture is a",1],
+      ["ENZYME","Amylase in saliva breaks starch into sugars. Amylase is one of these",1],
+      ["CATALYST","Lowers the energy needed to start a reaction without being used up",1],
+      ["REACTANT","Hydrogen and oxygen are these when they combine to make water",1],
+      ["PRODUCT","Water is this when hydrogen and oxygen react",1],
+      ["GLUCOSE","The sugar made in photosynthesis and used in cellular respiration",1],
+      ["LIPID","Butter, olive oil and wax all belong to this group of molecules",1],
+      ["PROTEIN","A chain of amino acids folded into a specific shape",1],
+      ["CARBOHYDRATE","Sugars, starches and cellulose all belong to this group",1],
+      ["STARCH","The way plants store glucose for later use",1],
+      ["CELLULOSE","Tough fiber in plant cell walls that humans cannot digest",1],
+      ["MONOMER","Glucose is one unit that can join with others to build a polymer",1],
+      ["POLYMER","Starch, made of many glucose units joined together, is one of these",1],
+      ["ACTIVATION","The extra push needed to start a reaction, even one that releases energy",1],
+      ["NUCLEUS","Protons and neutrons are packed in the center of an atom called the",1],
+      ["ATOMIC","Carbon's ___ number is 6 because it has six protons",1],
+      ["MASS","Carbon-12's ___ number is 12 because it has 6 protons plus 6 neutrons",1],
+      ["OXYGEN","The element with symbol O that you breathe as O2",1],
+      ["HYDROGEN","The lightest element, with the symbol H",1],
+      ["WATER","The compound H2O; it is polar and often called the universal solvent",1],
+      ["RADIOACTIVE","Atoms that decay at a steady rate, so they can be used to date fossils",1],
+      ["COVALENT","Atoms share pairs of electrons to complete their outer shells",1],
+      ["IONIC","Sodium gives up an electron and chlorine gains it, so the particles attract. What bond forms?",1],
+      ["CARBONDIOXIDE","Gas made of one carbon atom and two oxygen atoms; plants use it in photosynthesis (two words written as one)"],
+      ["ATOMICNUMBER","The number of protons in an atom of an element (two words written as one)"],
+      ["WATERMOLECULE","H2O: one oxygen atom joined to two hydrogen atoms (two words written as one)"],
+      ["CHEMICALENERGY","Energy stored in the bonds between atoms, such as in glucose (two words written as one)"]
+    ],
+    c3: [
+      ["ECOLOGY","Study of how living things interact with each other and their surroundings"],
+      ["BIOSPHERE","All parts of Earth where life exists"],
+      ["SPECIES","Group of similar organisms that can breed with each other"],
+      ["POPULATION","Group of one species living in the same area"],
+      ["COMMUNITY","All the different populations living in one area"],
+      ["ECOSYSTEM","All the living and nonliving things in an area"],
+      ["BIOTIC","Describes the living parts of an ecosystem"],
+      ["ABIOTIC","Describes nonliving parts, like sunlight and soil"],
+      ["PRODUCER","Organism that makes its own food"],
+      ["HETEROTROPH","Organism that must eat other organisms for energy"],
+      ["CONSUMER","Organism that eats other organisms"],
+      ["HERBIVORE","Eats only plants"],
+      ["CARNIVORE","Eats only animals"],
+      ["OMNIVORE","Eats both plants and animals"],
+      ["DETRITIVORE","Feeds on dead plant and animal remains"],
+      ["DECOMPOSER","Breaks down dead matter and returns nutrients to the soil"],
+      ["SCAVENGER","Feeds on the bodies of dead animals"],
+      ["PHOTOSYNTHESIS","Process that uses sunlight to make sugar"],
+      ["CHEMOSYNTHESIS","Making food from chemical energy instead of sunlight"],
+      ["TROPHIC","___ level: an organism's step in a food chain"],
+      ["PYRAMID","Diagram showing energy or biomass at each trophic level"],
+      ["BIOMASS","Total mass of living tissue at a trophic level"],
+      ["NUTRIENT","Chemical substance an organism needs to live"],
+      ["NITROGEN","Gas that makes up most of the air; recycled by bacteria"],
+      ["CARBON","Element found in all living things, cycled through the biosphere"],
+      ["ENERGY","Flows one way through an ecosystem"],
+      ["EVAPORATION","Water changing from liquid to gas"],
+      ["CONDENSATION","Water vapor changing into liquid droplets"],
+      ["PRECIPITATION","Rain, snow, sleet and hail"],
+      ["TRANSPIRATION","Plants losing water vapor through their leaves"],
+      ["BIOGEOCHEMICAL","___ cycle: moves matter between living and nonliving parts"],
+      ["FOODCHAIN","A one-way series showing who eats whom (two words written as one)"],
+      ["FOODWEB","A network of many overlapping food chains (two words written as one)"],
+      ["SUNLIGHT","The main energy source for most ecosystems"],
+      ["ATMOSPHERE","The layer of gases around Earth"],
+      ["HYDROSPHERE","All of the water on Earth"],
+      ["RESPIRATION","Cells use oxygen to release energy from food, and this process makes CO2"],
+      ["FIXATION","Nitrogen ___: bacteria change nitrogen gas into a form plants can use"],
+      ["RUNOFF","Rainwater that flows over land into streams"],
+      ["FOSSIL","___ fuel: coal, oil or gas formed from ancient organisms"],
+      ["CHLOROPHYLL","Green pigment that captures light energy"],
+      ["FUNGI","Kingdom that includes mushrooms and molds"],
+      ["BACTERIA","Tiny single-celled organisms; many are decomposers"],
+      ["PERCENT","About ten ___ of the energy moves up to the next trophic level"],
+      ["HEAT","Most energy lost at each trophic level leaves as this"],
+      ["PRODUCER","Bacteria near deep-sea vents make food from chemicals. They are still this",1],
+      ["DECOMPOSER","A mushroom absorbs nutrients from a dead log. Its job in the ecosystem is as a ___",1],
+      ["DETRITIVORE","An earthworm eats dead leaves in the soil. What is it?",1],
+      ["SCAVENGER","A vulture eating a dead deer is this kind of consumer, not a predator",1],
+      ["OMNIVORE","A bear that eats berries and salmon is this kind of consumer",1],
+      ["HERBIVORE","A caterpillar chewing leaves is this kind of consumer",1],
+      ["CARNIVORE","A frog catching flies is this kind of consumer",1],
+      ["PYRAMID","Wide base for producers, narrow top. Each step holds about 10% of the energy below",1],
+      ["ENERGY","Matter is recycled in the biosphere, but this is not. It flows one way",1],
+      ["BIOMASS","The total dry mass of all the grass in a field is this",1],
+      ["TROPHIC","Grass is level 1 and a rabbit is level 2. These are ___ levels",1],
+      ["PHOTOSYNTHESIS","It takes in carbon dioxide and water and gives off oxygen",1],
+      ["CHEMOSYNTHESIS","Tube worms live on bacteria that use this process, not sunlight",1],
+      ["EVAPORATION","The sun heats ocean water and it turns to vapor. Which step is this?",1],
+      ["CONDENSATION","Water vapor cools high in the sky and forms cloud droplets. Which step is this?",1],
+      ["TRANSPIRATION","Water leaves a plant through tiny holes in its leaves. Which step is this?",1],
+      ["NITROGEN","78% of the air is this gas, yet most organisms cannot use it directly",1],
+      ["CARBON","Burning fossil fuels adds extra ___ dioxide to the air",1],
+      ["POPULATION","All the deer in a forest make up one of these",1],
+      ["COMMUNITY","All the deer, oaks and fungi in a forest (living things only)",1],
+      ["ECOSYSTEM","A pond with its fish, plants, water and rocks",1],
+      ["ABIOTIC","Temperature, soil and sunlight are this kind of factor",1],
+      ["BIOTIC","Bacteria in the soil are this kind of factor",1],
+      ["NUTRIENT","Nitrogen and phosphorus in the soil are examples of this",1],
+      ["HETEROTROPH","Every consumer is this type of organism",1],
+      ["SPECIES","Lions and tigers are different ___ even though both are big cats",1],
+      ["FIXATION","Lightning and bacteria can both do this to nitrogen gas",1],
+      ["BIOSPHERE","The thin zone from the deep ocean floor up into the sky where life exists",1],
+      ["RESPIRATION","Plants and animals both do this, but only plants do photosynthesis",1],
+      ["AUTOTROPH","Organism that makes its own food from light or chemicals"],
+      ["DETRITUS","Dead leaves, wood and animal remains that detritivores eat"],
+      ["PHOSPHORUS","Element in DNA that is often a limiting nutrient in ecosystems"],
+      ["AMMONIA","Nitrogen compound released when bacteria break down waste"],
+      ["NITRATE","Form of nitrogen that plants absorb from the soil"],
+      ["FERTILIZER","Chemical added to soil that supplies nitrogen and phosphorus"],
+      ["ALGAE","Photosynthetic organisms that live in water, such as pond scum and kelp"],
+      ["BLOOM","Algal ___: sudden rapid growth of algae caused by extra nutrients"],
+      ["PHYTOPLANKTON","Tiny floating producers at the base of ocean food webs"],
+      ["ZOOPLANKTON","Tiny floating animals that eat phytoplankton"],
+      ["DENITRIFYING","___ bacteria change nitrates back into nitrogen gas"],
+      ["LIGHTNING","A flash that can change nitrogen gas into compounds plants can use"],
+      ["GROUNDWATER","Water stored underground in soil and rock"],
+      ["GLACIER","Slow-moving mass of ice that stores fresh water"],
+      ["OCEAN","Holds most of Earth's water"],
+      ["CLOUD","Water droplets gathered in the sky"],
+      ["PHOTOSYNTHETIC","Describes organisms that capture sunlight to make food"],
+      ["ECOLOGIST","Scientist who studies how organisms interact with their surroundings"],
+      ["ENVIRONMENT","Everything that surrounds and affects an organism"],
+      ["INTERACTION","A relationship in which organisms affect each other or their surroundings"],
+      ["MATTER","Anything that has mass and takes up space; it is recycled in the biosphere"],
+      ["SOIL","Layer of Earth's surface where roots grow and nutrients are stored"],
+      ["ROOTS","Plant parts that absorb water and nutrients from the soil"],
+      ["VAPOR","The gas form of water"],
+      ["LEVEL","Each step in a food chain or energy pyramid"],
+      ["GRASS","A common producer in a grassland that rabbits and zebras eat"],
+      ["MUSHROOM","Fungus that grows on a dead log and absorbs its nutrients"],
+      ["EARTHWORM","Soil animal that eats dead leaves and organic matter"],
+      ["VULTURE","Bird that feeds on dead animals"],
+      ["TRANSFER","Energy ___: movement of energy from one trophic level to the next"],
+      ["DECAY","Breakdown of dead organisms by decomposers"],
+      ["WASTE","Material animals release; decomposers break it down"],
+      ["BURNING","Wood or fossil fuels do this and release carbon dioxide into the air"],
+      ["VOLCANO","Eruptions release carbon dioxide into the atmosphere"],
+      ["COAL","Fossil fuel formed from ancient plants"],
+      ["ENERGYPYRAMID","Diagram showing how much energy is available at each feeding level (two words written as one)"],
+      ["ENERGYPYRAMID","Grass has the most energy in this diagram and hawks have the least. What is the diagram? (two words written as one)",1],
+      ["TROPHICLEVEL","An organism's position in a food chain (two words written as one)"],
+      ["CARBONCYCLE","Movement of carbon through living things, the air, oceans and rocks (two words written as one)"],
+      ["NITROGENCYCLE","Movement of nitrogen among air, soil and living things, using bacteria (two words written as one)"],
+      ["NITROGENCYCLE","Bacteria on legume roots and lightning both help start this cycle (two words written as one)",1],
+      ["SOLARENERGY","The source of nearly all energy that enters an ecosystem (two words written as one)"],
+      ["WATERCYCLE","Evaporation, condensation and precipitation make up this cycle (two words written as one)"],
+      ["ECOLOGY","A scientist studies how wolves affect moose and plants on an island. What science is this?",1],
+      ["BIOSPHERE","The air, the oceans and the land where life exists, all together",1],
+      ["ECOSYSTEM","A coral reef with its fish, algae, water, sand and sunlight is an example of one",1],
+      ["PRODUCER","Algae in a pond are one of these because they make food using light",1],
+      ["CONSUMER","A zebra eating grass is this type of organism",1],
+      ["HERBIVORE","Cow, deer and rabbit all belong to this group",1],
+      ["CARNIVORE","Lion, shark and hawk all belong to this group",1],
+      ["PHOTOSYNTHESIS","Chloroplasts use light to turn carbon dioxide and water into glucose and oxygen",1],
+      ["BIOMASS","The dry mass of living tissue shown by the size of each layer in a pyramid",1],
+      ["DECOMPOSER","Bacteria and fungi that return nutrients from dead matter to the soil",1],
+      ["CHLOROPHYLL","The pigment that makes leaves green and absorbs sunlight",1],
+      ["EVAPORATION","A puddle slowly disappearing on a sunny day is an example of",1],
+      ["CONDENSATION","Dew forming on a cold glass of water is an example of",1],
+      ["RUNOFF","Rainwater flowing over pavement into a storm drain and then a stream",1],
+      ["RESPIRATION","Cells break down glucose using oxygen and give off carbon dioxide and water",1],
+      ["ATMOSPHERE","The layer of gases that holds oxygen and nitrogen around Earth",1],
+      ["HYDROSPHERE","Oceans, lakes, rivers, ice and groundwater together make up Earth's",1],
+      ["CARBON","Diamond, graphite and all organic molecules are built on this element",1],
+      ["NITROGEN","The element found in every protein and every nucleic acid",1],
+      ["TROPHIC","A hawk eats a snake that ate a mouse. Each feeding step is a ___ level",1],
+      ["PERCENT","Only about 10 ___ of the energy passes to the next level",1],
+      ["BACTERIA","Single-celled organisms; some decompose dead matter and some fix nitrogen",1],
+      ["SPECIES","Group of organisms so similar that they can breed and produce fertile offspring",1],
+      ["COMMUNITY","The deer, oaks, fungi and insects living in one forest, taken together",1],
+      ["DETRITIVORE","Feeds on bits of dead matter, such as a millipede in leaf litter",1],
+      ["CONSUMER","Cannot make its own food, so it gets energy by eating other organisms",1],
+      ["DECOMPOSITION","The breakdown of dead organisms into simpler materials"],
+      ["BIOMASSPYRAMID","Diagram that shows the mass of living tissue at each trophic level (two words written as one)"],
+      ["TOPCARNIVORE","An animal at the very top of a food chain, with few or no predators (two words written as one)"],
+      ["FOSSILFUELS","Coal, oil and natural gas, formed from ancient organisms (two words written as one)"],
+      ["FOSSILFUELS","Burning these adds carbon dioxide to the atmosphere faster than plants can remove it (two words written as one)",1],
+      ["ORGANICMATTER","Material from living or once-living things that decomposers break down (two words written as one)"],
+      ["ATMOSPHERIC","Describes something in the air around Earth, such as nitrogen gas"],
+      ["ALGALBLOOM","A sudden, rapid growth of algae caused by extra nutrients in the water (two words written as one)"],
+      ["ENERGYFLOW","The one-way movement of energy through an ecosystem (two words written as one)"],
+      ["FOODCHAIN","A series of steps in which organisms transfer energy by eating one another (two words written as one)"],
+      ["FOODWEB","A network of feeding relationships that links many food chains (two words written as one)"]
+    ],
+    c4: [
+      ["WEATHER","Day-to-day condition of the atmosphere"],
+      ["CLIMATE","Average weather in an area over many years"],
+      ["GREENHOUSE","___ effect: gases trap heat in the atmosphere"],
+      ["NICHE","An organism's role and the conditions it needs"],
+      ["HABITAT","The place where an organism lives"],
+      ["RESOURCE","Something an organism needs, like food or space"],
+      ["COMPETITION","Contest between organisms for the same resource"],
+      ["PREDATION","One organism captures and feeds on another"],
+      ["PREDATOR","Animal that hunts and eats other animals"],
+      ["PREY","Animal that is hunted by a predator"],
+      ["SYMBIOSIS","Relationship in which two species live closely together"],
+      ["MUTUALISM","Symbiosis where both species benefit"],
+      ["COMMENSALISM","Symbiosis where one species benefits and the other is not affected"],
+      ["PARASITISM","Symbiosis where one species benefits and the other is harmed"],
+      ["PARASITE","Organism that lives on or in a host and harms it"],
+      ["KEYSTONE","___ species: has a big effect on its community"],
+      ["SUCCESSION","Series of predictable changes in a community over time"],
+      ["PRIMARY","___ succession: begins on bare rock with no soil"],
+      ["SECONDARY","___ succession: begins where soil remains after a disturbance"],
+      ["PIONEER","First species to move into a new or disturbed area"],
+      ["CLIMAX","___ community: the stable, final stage of succession"],
+      ["BIOME","Large region with a certain climate and certain organisms"],
+      ["TUNDRA","Cold, treeless biome with frozen soil below"],
+      ["TAIGA","Northern forest biome of cone-bearing trees"],
+      ["DESERT","Biome with very little rain"],
+      ["GRASSLAND","Biome dominated by grasses"],
+      ["CANOPY","Top layer of the rain forest"],
+      ["UNDERSTORY","Shady layer of short plants below the canopy"],
+      ["ESTUARY","Where a river meets the sea and fresh and salt water mix"],
+      ["PLANKTON","Tiny organisms that float near the surface of water"],
+      ["INTERTIDAL","Zone covered at high tide and exposed at low tide"],
+      ["WETLAND","Land covered with water for part of the year"],
+      ["TEMPERATE","___ zone: mild climate between the tropics and the poles"],
+      ["TROPICAL","___ zone: warm climate near the equator"],
+      ["LATITUDE","Distance north or south of the equator"],
+      ["EQUATOR","Imaginary line around the middle of Earth"],
+      ["PERMAFROST","Soil that stays frozen all year in the tundra"],
+      ["CONIFER","Tree with cones and needles, such as a pine"],
+      ["DECIDUOUS","Describes trees that lose their leaves in autumn"],
+      ["SAVANNA","Grassland with scattered trees and a dry season"],
+      ["RAINFOREST","Warm, wet biome with more species than any other"],
+      ["FRESHWATER","Water with very little salt, like in lakes and rivers"],
+      ["DISTURBANCE","An event, like a fire or storm, that changes a community"],
+      ["TOLERANCE","The ability to survive changes in abiotic factors"],
+      ["BENTHOS","Organisms that live on the bottom of a body of water"],
+      ["HERBIVORY","When an animal feeds on producers such as plants"],
+      ["CAMOUFLAGE","Coloring that helps an organism blend into its surroundings"],
+      ["EXCLUSION","Competitive ___: two species cannot share the same niche for long"],
+      ["BIODIVERSITY","The variety of living things in an area"],
+      ["MICROCLIMATE","A small area whose climate differs from its surroundings"],
+      ["WEATHER","Rain today is this. Wet summers every year are climate",1],
+      ["CLIMATE","Hot, humid summers and cool winters year after year describe a place's ___",1],
+      ["HABITAT","A frog's pond is its ___. What it eats and when it is active is its niche",1],
+      ["NICHE","More than an address: where an organism lives AND how it uses resources",1],
+      ["MUTUALISM","Bees get nectar and flowers get pollinated",1],
+      ["COMMENSALISM","Barnacles ride on a whale and the whale is not affected",1],
+      ["PARASITISM","A tick drinks blood from a dog and harms it",1],
+      ["SYMBIOSIS","Mutualism, commensalism and parasitism are all kinds of this",1],
+      ["PREY","A lion chases a zebra. The zebra is the ___",1],
+      ["PREDATOR","An owl catches a mouse. The owl is the ___",1],
+      ["PRIMARY","Lichens start growing on new volcanic rock. Which succession is this?",1],
+      ["SECONDARY","A farm field is abandoned and slowly turns back into forest. Which succession is this?",1],
+      ["PIONEER","Lichens growing first on bare rock are this kind of species",1],
+      ["KEYSTONE","Sea otters keep urchins in check, so kelp forests survive. Otters are a ___ species",1],
+      ["CANOPY","Most rain forest animals live in this top layer of leaves",1],
+      ["TUNDRA","Few trees grow here because the soil below stays frozen all year",1],
+      ["TAIGA","Cone-bearing forests with long, cold winters",1],
+      ["DESERT","Hot or cold, this biome gets less than 25 cm of rain a year",1],
+      ["ESTUARY","Ocean salt water mixes with river water here, making a nursery for fish",1],
+      ["COMPETITION","Two plants growing close together fight for the same sunlight and water",1],
+      ["GREENHOUSE","Without this effect Earth would be frozen, but too much of it warms the planet",1],
+      ["SUCCESSION","Moss, then grass, then shrubs, then trees replace each other over time",1],
+      ["BIOME","Tundra, taiga and desert are each one of these",1],
+      ["RESOURCE","Food, water, shelter and space are each one of these",1],
+      ["UNDERSTORY","Dim layer of shade-loving plants beneath the rain forest canopy",1],
+      ["INTERTIDAL","A crab lives here and is underwater at high tide but dry at low tide",1],
+      ["PLANKTON","Tiny drifting organisms that form the base of most ocean food chains",1],
+      ["WETLAND","Marshes and swamps are examples of this ecosystem",1],
+      ["BENTHOS","Sea stars and crabs on the ocean floor belong to this group",1],
+      ["HUMUS","Dark, rich layer of decayed organic matter in soil"],
+      ["LICHEN","Partnership of a fungus and an alga, often the first to grow on bare rock"],
+      ["MOSS","Small green plant that grows in damp places and helps start soil formation"],
+      ["BOREAL","___ forest: another name for the taiga"],
+      ["WOODLAND","Temperate ___: a drier biome with oak and hickory trees and open spaces"],
+      ["SHRUBLAND","Biome with dense shrubs and dry summers"],
+      ["MANGROVE","Salt-tolerant tree that grows in tropical estuaries"],
+      ["MARSH","Wetland dominated by grasses and reeds"],
+      ["SWAMP","Wetland with trees and shrubs"],
+      ["PHOTIC","___ zone: the sunlit upper layer of water where photosynthesis occurs"],
+      ["APHOTIC","___ zone: the dark water too deep for sunlight to reach"],
+      ["CORAL","Animals that build reefs in warm, shallow seas"],
+      ["KELP","Giant brown algae that forms underwater forests"],
+      ["OTTER","Sea ___: keystone predator that eats sea urchins"],
+      ["URCHIN","Spiny animal that eats kelp"],
+      ["LAKE","Large body of standing fresh water"],
+      ["POND","Small body of standing fresh water"],
+      ["RIVER","Flowing fresh water that moves toward the sea"],
+      ["STREAM","A small, flowing body of fresh water"],
+      ["CURRENT","Ocean ___: a large stream of water that moves heat around the globe"],
+      ["ALTITUDE","Height above sea level; air gets colder as it increases"],
+      ["POLES","The cold regions at the top and bottom of Earth"],
+      ["ARCTIC","The cold region around the North Pole, home of polar bears"],
+      ["RAINFALL","The amount of water that falls as rain; it separates forests from deserts"],
+      ["TEMPERATURE","Average ___ and precipitation describe a region's climate"],
+      ["FOREST","Biome dominated by trees"],
+      ["SHRUB","A woody plant smaller than a tree"],
+      ["HOST","The organism a parasite lives on or in"],
+      ["TICK","Blood-feeding arachnid; a parasite of dogs and deer"],
+      ["BARNACLE","Animal that attaches to whales, a commensal relationship"],
+      ["RELATIONSHIP","An interaction between two species, such as mutualism"],
+      ["ECOLOGICAL","___ succession: gradual change in a community over time"],
+      ["VOLCANIC","___ eruptions can create new land where primary succession begins"],
+      ["FARMLAND","Abandoned ___ often goes through secondary succession"],
+      ["TIDE","Rise and fall of ocean water, caused mainly by the moon"],
+      ["DEPTH","Distance below the surface; light disappears as it increases"],
+      ["SURFACE","The photic zone is the layer near the water's ___"],
+      ["LION","Predator of the savanna that hunts zebras"],
+      ["ZEBRA","Striped grazer hunted by lions"],
+      ["EAGLE","Large bird of prey that hunts fish and small mammals"],
+      ["HAWK","Bird of prey that hunts mice and snakes"],
+      ["SNAKE","Reptile that eats mice and is eaten by hawks"],
+      ["PIONEERSPECIES","The first organisms to colonize a new or disturbed area (two words written as one)"],
+      ["GREENHOUSEGAS","Gas, such as carbon dioxide, that traps heat in the atmosphere (two words written as one)"],
+      ["OCEANCURRENT","A large stream of water that moves heat from the tropics toward the poles (two words written as one)"],
+      ["BIOTICFACTOR","A living part of an ecosystem, such as a plant, animal or fungus (two words written as one)"],
+      ["BIOTICFACTOR","A rabbit is this kind of factor in a field, but rainfall is not (two words written as one)",1],
+      ["ABIOTICFACTOR","A nonliving part of an ecosystem, such as sunlight, soil or temperature (two words written as one)"],
+      ["ABIOTICFACTOR","Soil acidity and sunlight are this kind of factor, but a hawk is not (two words written as one)",1],
+      ["CORALREEF","Warm, shallow marine ecosystem built by tiny animals with limestone skeletons (two words written as one)"],
+      ["OPENOCEAN","Marine zone far from shore with few nutrients and widely spaced organisms (two words written as one)"],
+      ["SALTMARSH","Coastal wetland flooded by tides and covered with salt-tolerant grasses (two words written as one)"],
+      ["CLIMATE","Latitude, altitude, ocean currents and winds all influence this long-term pattern",1],
+      ["HABITAT","A tide pool, a hollow log and a coral reef are each one of these",1],
+      ["NICHE","A woodpecker eats insects from bark and nests in tree holes. This describes its",1],
+      ["COMPETITION","Two kinds of finches eat the same seeds when food is scarce. This is",1],
+      ["PREDATION","A hawk catches a snake. This feeding relationship is called",1],
+      ["MUTUALISM","In a lichen, the fungus and the alga both benefit. This is",1],
+      ["COMMENSALISM","An orchid grows on a tree and gets light, while the tree is unharmed. This is",1],
+      ["PARASITISM","A tapeworm feeds inside a dog's intestine. This is",1],
+      ["PIONEER","Lichens and mosses are the first to grow on new volcanic rock. They are called a ___ species",1],
+      ["CLIMAX","The final, stable stage of ecological succession is a ___ community",1],
+      ["TUNDRA","Biome with permafrost and few trees, found near the poles",1],
+      ["TAIGA","Spruce and fir forests with long, cold winters south of the tundra",1],
+      ["DESERT","Cactus and camels live in this biome, which gets little rainfall",1],
+      ["GRASSLAND","A prairie with tall grasses, bison and few trees",1],
+      ["SAVANNA","Lions, zebras, scattered trees and a dry season",1],
+      ["PLANKTON","Drifting organisms of the sea, including phytoplankton and zooplankton",1],
+      ["ESTUARY","A famous example is where a river meets the sea in Chesapeake Bay",1],
+      ["WETLAND","Marsh, swamp and bog are all examples of this ecosystem",1],
+      ["CANOPY","The treetops that form an umbrella over a rain forest",1],
+      ["KEYSTONE","If this species is removed, the whole community changes dramatically",1],
+      ["PREY","A zebra to a lion, or a mouse to an owl",1],
+      ["PREDATOR","A lion to a zebra, or an owl to a mouse",1],
+      ["EQUATOR","The imaginary line at 0 degrees latitude, where the climate is warmest",1],
+      ["DECIDUOUS","Maple trees drop their leaves in fall. What type of tree is that?",1],
+      ["CONIFER","Pine, spruce and fir trees all belong to this group",1],
+      ["RESOURCE","Light, water and nutrients are examples of this for a plant",1],
+      ["DISTURBANCE","A fire, a flood or a hurricane that changes a community",1],
+      ["BIOME","Tundra, taiga and desert are each an example of this",1],
+      ["SYMBIOSIS","Two species living in a close, long-term relationship",1],
+      ["INTERTIDALZONE","Shore area that is under water at high tide and exposed at low tide (two words written as one)"],
+      ["APHOTICZONE","The deep, dark part of the ocean where sunlight never reaches (two words written as one)"],
+      ["COASTALOCEAN","Marine zone extending from the low-tide line out over the continental shelf (two words written as one)"],
+      ["BENTHICZONE","The ocean floor, home to organisms called benthos (two words written as one)"],
+      ["KELPFOREST","Underwater ecosystem of giant algae, home to otters and sea urchins (two words written as one)"]
+    ],
+    c5: [
+      ["DENSITY","Number of individuals per unit of area"],
+      ["RANGE","Geographic ___: the area a population inhabits"],
+      ["GROWTH","Increase in the size of a population"],
+      ["BIRTHRATE","Number of births per 1,000 individuals in a year"],
+      ["DEATHRATE","Number of deaths per 1,000 individuals in a year"],
+      ["IMMIGRATION","Movement of individuals into an area"],
+      ["EMIGRATION","Movement of individuals out of an area"],
+      ["STRUCTURE","Age ___: how many males and females are in each age group"],
+      ["EXPONENTIAL","Growth pattern that makes a J-shaped curve"],
+      ["LOGISTIC","Growth pattern that makes an S-shaped curve"],
+      ["CAPACITY","Carrying ___: the largest population an area can support"],
+      ["CARRYING","___ capacity: the most individuals an area can support over time"],
+      ["LIMITING","___ factor: anything that controls the size of a population"],
+      ["FACTOR","A condition that affects the outcome"],
+      ["DISEASE","Illness that spreads faster in crowded populations"],
+      ["STRESS","Crowding can cause this in a dense population"],
+      ["DISASTER","Natural ___: a fire or flood that can limit a population"],
+      ["MOOSE","Large deer hunted by wolves on Isle Royale"],
+      ["WOLVES","Predators of the moose on Isle Royale"],
+      ["HYDRILLA","Water plant that grew without limit in the United States"],
+      ["RABBITS","Their numbers exploded in Australia"],
+      ["CROWDING","When too many individuals live in one area"],
+      ["OVERCROWDING","Too many individuals living in too little space"],
+      ["SPACE","Plants and animals compete for this and for food"],
+      ["CYCLE","Predator and prey numbers rise and fall in a repeating ___"],
+      ["FLUCTUATE","To go up and down, like population size from year to year"],
+      ["WOLF","One of the predators of moose on Isle Royale (singular)"],
+      ["RATE","Growth ___: how fast a population size changes"],
+      ["FIRE","A natural disaster that can burn a forest and limit its populations"],
+      ["DROUGHT","A long time with very little rain"],
+      ["FLOOD","Too much water covering normally dry land"],
+      ["NONNATIVE","A species brought to a place where it did not live before"],
+      ["INVASIVE","Describes a nonnative species that spreads quickly and harms an ecosystem"],
+      ["EQUILIBRIUM","A balance, like births equal deaths at carrying capacity"],
+      ["DENSITY","50 deer live in 10 square km. This is 5 deer per square km, the population ___",1],
+      ["EXPONENTIAL","Population doubles every hour with unlimited food and space. What kind of growth is this?",1],
+      ["LOGISTIC","Starts out like a J-shape, then levels off into an S-shape",1],
+      ["CARRYING","The word that goes before 'capacity' for the largest population an area can support",1],
+      ["CAPACITY","In an S-shaped curve, the population levels off at the carrying ___",1],
+      ["IMMIGRATION","Ten wolves swim to an island. For the island, this is ___",1],
+      ["EMIGRATION","Birds leave a crowded island for the mainland. For the island, this is ___",1],
+      ["LIMITING","Food, space, disease and weather can each be this kind of factor",1],
+      ["DISEASE","Spreads faster in crowded herds, so it is a density-dependent factor",1],
+      ["DISASTER","A volcano erupts. Density does not matter, so it is a natural ___",1],
+      ["STRESS","Crowded rats may fight and stop breeding. Crowding can cause this",1],
+      ["BIRTHRATE","If this goes up while the death rate stays the same, the population grows faster",1],
+      ["DEATHRATE","If this goes up while the birth rate stays the same, growth slows",1],
+      ["STRUCTURE","A graph with bars for each age group and each sex shows age ___",1],
+      ["RANGE","The area where a species can be found, such as moose on Isle Royale",1],
+      ["DROUGHT","Weeks without rain kill plants no matter how many plants there are",1],
+      ["GROWTH","If births and immigration beat deaths and emigration, this goes up",1],
+      ["RABBITS","Introduced to Australia with no predators, they showed exponential growth",1],
+      ["HYDRILLA","Water plant that kept growing in the U.S. but stopped at carrying capacity in Asia",1],
+      ["GEOGRAPHIC","___ range: the area inhabited by a population"],
+      ["AUSTRALIA","Country where introduced rabbits increased explosively"],
+      ["ISLAND","Land surrounded by water, like Isle Royale"],
+      ["HURRICANE","Severe storm that can wipe out a population, whatever its size"],
+      ["WILDFIRE","Uncontrolled fire that burns through forests or grasslands"],
+      ["MIGRATION","Seasonal movement of animals from one region to another"],
+      ["FEMALE","Age structure shows the number of males and ___ in each age group"],
+      ["CURVE","The J-shaped or S-shaped line on a growth graph"],
+      ["PHASE","One of three stages of logistic growth"],
+      ["UNLIMITED","Exponential growth needs this much food and space"],
+      ["IDEAL","___ conditions: plenty of food and space and no predators"],
+      ["FOOD","A limiting factor: when this runs out, populations decline"],
+      ["PACK","A group of wolves that hunt together"],
+      ["SCARCE","In short supply, like food during a drought"],
+      ["DECLINE","To get smaller over time"],
+      ["INCREASE","To get larger over time"],
+      ["SIZE","The number of individuals in a population"],
+      ["COUNT","Ecologists ___ individuals to estimate how many live in an area"],
+      ["ESTIMATE","A careful guess about how many individuals a population has"],
+      ["EXTINCTION","When every member of a species has died"],
+      ["ENDANGERED","At risk of becoming extinct"],
+      ["PEST","An organism that harms crops or people, such as the gypsy moth"],
+      ["ASIA","Continent where hydrilla's population stopped at its carrying capacity"],
+      ["BOSTON","City near where gypsy moths escaped from a laboratory"],
+      ["EXPLOSION","A sudden, rapid increase, like the rabbit population in Australia"],
+      ["LIMITINGFACTOR","Anything that controls the size of a population (two words written as one)"],
+      ["LIMITINGFACTOR","Food, space, predators and disease are each one. What is the general name? (two words written as one)",1],
+      ["LOGISTICGROWTH","Growth that starts fast, slows down and then stops (two words written as one)"],
+      ["LOGISTICGROWTH","A yeast culture in a test tube grows quickly and then levels off as food runs low. What type of growth is this? (two words written as one)",1],
+      ["AGESTRUCTURE","The number of males and females in each age group of a population (two words written as one)"],
+      ["POPULATIONSIZE","The number of individuals in a population at one time (two words written as one)"],
+      ["UNUSUALWEATHER","A density-independent limiting factor, such as a heat wave or an early frost (two words written as one)"],
+      ["GROWTHRATE","How fast a population's size changes (two words written as one)"],
+      ["ISLEROYALE","Island in Lake Superior where moose and wolves have been studied for decades (two words written as one)"],
+      ["GYPSYMOTH","Nonnative insect released near Boston whose caterpillars eat leaves (two words written as one)"],
+      ["RANGE","Where a population is found on a map",1],
+      ["GROWTH","Population size increasing over time",1],
+      ["BIRTHRATE","If more babies are born per 1,000 people, this number rises",1],
+      ["IMMIGRATION","Individuals arriving in a population from somewhere else",1],
+      ["EMIGRATION","Individuals leaving a population for somewhere else",1],
+      ["EXPONENTIAL","A population doubles again and again, and its graph is shaped like a J",1],
+      ["LOGISTIC","An S-shaped growth curve that levels off at carrying capacity",1],
+      ["CAPACITY","The largest population an environment can support",1],
+      ["LIMITING","Predation, competition and disease are all this kind of factor",1],
+      ["FACTOR","Something that can affect the size of a population",1],
+      ["DISEASE","Spreads quickly when individuals are crowded together",1],
+      ["CROWDING","Many individuals living in a small space",1],
+      ["STRESS","Crowded animals may suffer this and stop reproducing",1],
+      ["DROUGHT","A long period without rain",1],
+      ["FLOOD","Overflowing water that covers dry land",1],
+      ["FIRE","Burning that can destroy a forest habitat in minutes",1],
+      ["MOOSE","A large herbivore of Isle Royale and the prey of wolves",1],
+      ["HYDRILLA","An invasive water plant with no natural enemies in the United States",1],
+      ["RATE","Speed of change, such as births per 1,000 individuals per year",1],
+      ["SPACE","Needed for nesting and feeding, so it can limit a population",1],
+      ["EQUILIBRIUM","A state of balance in which births equal deaths",1],
+      ["FLUCTUATE","Go up and down from year to year around the carrying capacity",1],
+      ["NONNATIVE","A species brought in from another place",1],
+      ["INVASIVE","Spreads quickly and harms the ecosystem it enters",1],
+      ["DENSITY","Number of individuals per square kilometer",1],
+      ["DEATHRATE","If more individuals die per 1,000 each year, this number rises",1],
+      ["OVERCROWDING","Too many individuals in too little space",1],
+      ["FOODSHORTAGE","A limiting factor that raises the death rate in a crowded population (two words written as one)"],
+      ["PREDATORPREY","A relationship, like that of wolves and moose, that helps regulate population sizes (two words written as one)"]
+    ]
+  };
+  var T_HASH = 'd6ecc7b9e521e340c301bc8b9e38b7ef765611f3d800b2e800277ffd9c13b289';
+
+  var $ = function(s, r){ return (r || document).querySelector(s); };
+  var $$ = function(s, r){ return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var isTeacher = function(){ return document.body.classList.contains('teacher'); };
+  function hintBtn(btn, used){ var c = btn.getAttribute('data-cost') || '2'; btn.disabled = used; btn.textContent = used ? 'Hint used' : 'Hint (1 left, \u2212' + c + ')'; }
+
+  /* ---------- points ---------- */
+  var WS_PTS = { easy: 4, med: 6, hard: 8 }, WS_BONUS = { easy: 10, med: 15, hard: 20 };
+  var WS_REVEAL = 3, WS_LIST = 20, WS_HINT = 2, TRICKY = 2;
+  var CW_N = { short: 8, std: 12, long: 18 }, CW_PPW = { short: 6, std: 7, long: 8 };
+  var CW_HINT = 2, CW_CHECK = 1;
+  var SC_BASE = { easy: 8, med: 12, hard: 16 }, SC_HINT = 3;
+  var SC_LEN = {
+    easy: function(w){ return w.length >= 4 && w.length <= 7; },
+    med: function(w){ return w.length >= 8 && w.length <= 10; },
+    hard: function(w){ return w.length >= 11; }
+  };
+  var HM_BASE = { easy: 8, med: 12, hard: 16 }, HM_MAX = { easy: 8, med: 6, hard: 4 }, HM_HINT = 3, HM_NOCLUE = 3;
+  var KEYS = ['ws', 'cw', 'sc', 'hm'], SKEY = 'bioPuzzleBreakPoints';
+  var score = { ws: 0, cw: 0, sc: 0, hm: 0 };
+  try {
+    var raw = window.localStorage.getItem(SKEY);
+    if (raw) { var o = JSON.parse(raw); KEYS.forEach(function(k){ if (typeof o[k] === 'number' && isFinite(o[k])) score[k] = Math.trunc(o[k]); }); }
+  } catch (err) {}
+  var UKEY = 'bioPuzzleBreakUsed', used = { ws: {}, cw: {}, sc: {}, hm: {} };
+  var OUT_ALL = 'You have used every fresh question in this game. Use Reset points and choose to erase the used questions too.';
+  var OUT_LVL = 'No fresh words left at this level. Try another difficulty, or use Reset points and choose to erase the used questions too.';
+  try {
+    var rawU = window.localStorage.getItem(UKEY);
+    if (rawU) { var ou = JSON.parse(rawU); KEYS.forEach(function(k){ if (Array.isArray(ou[k])) ou[k].forEach(function(x){ if (typeof x === 'string') used[k][x] = 1; }); }); }
+  } catch (err) {}
+  function hk(str){ var h = 2166136261; for (var i = 0; i < str.length; i++) { h = Math.imul((h ^ str.charCodeAt(i)) >>> 0, 16777619) >>> 0; } return h.toString(36); }
+  function saveUsed(){ try { var o = {}; KEYS.forEach(function(k){ o[k] = Object.keys(used[k]); }); window.localStorage.setItem(UKEY, JSON.stringify(o)); } catch (err) {} }
+  // Word search and crossword remember the clue. Scramble and hangman remember the word.
+  function ckey(g, clue, word){ return (g === 'ws' || g === 'cw') ? hk(clue) : word; }
+  function isUsed(g, t){ return !!used[g][ckey(g, t.c, t.w)]; }
+  function burn(g, clue, word){ var k = ckey(g, clue, word); if (!used[g][k]) { used[g][k] = 1; saveUsed(); drawLeft(); } }
+  function countFor(g, fresh){
+    var seen = {}, n = 0, lv = g === 'sc' ? $('#sc-level').value : null;
+    POOL.forEach(function(t){
+      if (g === 'sc' && !SC_LEN[lv](t.w)) return;
+      if (fresh && isUsed(g, t)) return;
+      if (g === 'ws' || g === 'cw') n++; else if (!seen[t.w]) { seen[t.w] = 1; n++; }
+    });
+    return n;
+  }
+  function drawLeft(){
+    var lab = { ws: 'Fresh questions left: ', cw: 'Fresh questions left: ', sc: 'Fresh words left at this level: ', hm: 'Fresh words left: ' };
+    KEYS.forEach(function(g){
+      var el = $('#left-' + g); if (!el) return;
+      var left = countFor(g, true), all = countFor(g, false);
+      el.textContent = lab[g] + left + ' of ' + all + '.';
+    });
+  }
+  function total(){ return score.ws + score.cw + score.sc + score.hm; }
+  function saveScore(){ try { window.localStorage.setItem(SKEY, JSON.stringify(score)); } catch (err) {} }
+  function drawScore(msg, kind){
+    var fmt = function(n){ return n < 0 ? '\u2212' + (-n) : String(n); };
+    $('#sb-total').textContent = fmt(total()); $('#final-num').textContent = fmt(total());
+    $('#sb-total').classList.toggle('neg', total() < 0); $('#final-num').parentNode.classList.toggle('neg', total() < 0);
+    KEYS.forEach(function(k){
+      var a = $('#sb-' + k), f = $('#f-' + k);
+      a.textContent = fmt(score[k]); f.textContent = fmt(score[k]);
+      a.classList.toggle('neg', score[k] < 0); f.classList.toggle('neg', score[k] < 0);
+    });
+    if (msg !== undefined) { var el = $('#sb-last'); el.textContent = msg; el.className = 'sb-last' + (kind ? ' ' + kind : ''); }
+    if (kind) { var n = $('#sb-total'); n.classList.remove('bump'); void n.offsetWidth; n.classList.add('bump'); }
+  }
+  function add(k, n, why){ if (n <= 0) return; score[k] += n; saveScore(); drawScore('+' + n + ' points: ' + why, 'up'); }
+  function spend(k, n, why){ score[k] -= n; saveScore(); drawScore('\u2212' + n + ' points: ' + why, 'down'); }
+  function note(msg){ drawScore(msg, ''); }
+
+  // BEGIN-POOL
+  var shuffle = function(a){ a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; };
+  var UNITS = Object.keys(TERMS);
+  var POOL = [];
+  UNITS.forEach(function(u){ TERMS[u].forEach(function(x){ POOL.push({ w: x[0], c: x[2] ? 'Tricky: ' + x[1] : x[1], u: u, t: !!x[2] }); }); });
+  function clash(w, arr){
+    return arr.some(function(p){ return p.w === w || p.w.indexOf(w) > -1 || w.indexOf(p.w) > -1; });
+  }
+  // A mixed sample: rotate through the units so every puzzle blends them.
+  function sample(n, keep, game){
+    var lists = UNITS.map(function(u){ return shuffle(POOL.filter(function(t){ return t.u === u && (!keep || keep(t.w)) && (!game || !isUsed(game, t)); })); });
+    var picked = [], i = Math.floor(Math.random() * UNITS.length), guard = 0;
+    while (picked.length < n && guard++ < 1000) {
+      var l = lists[i % UNITS.length]; i++;
+      while (l.length) { var t = l.shift(); if (t.t && Math.random() < 0.3) continue; if (!clash(t.w, picked)) { picked.push(t); break; } }
+    }
+    return shuffle(picked);
+  }
+  // END-POOL
+
+  /* ---------- tabs ---------- */
+  var tabs = $$('.tab');
+  function showTab(id){
+    tabs.forEach(function(t){
+      var on = t.id === 'tab-' + id;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      $('#p-' + t.id.slice(4)).hidden = !on;
+    });
+    if (id === 'cw' && !cw) cwInit();
+  }
+  tabs.forEach(function(t, i){
+    t.addEventListener('click', function(){ showTab(t.id.slice(4)); });
+    t.addEventListener('keydown', function(e){
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      var n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+      n.focus(); showTab(n.id.slice(4));
+    });
+  });
+
+  /* ---------- word search ---------- */
+  // BEGIN-WS
+  var DIRS = {
+    easy: [[0,1],[1,0]],
+    med:  [[0,1],[1,0],[1,1],[-1,1]],
+    hard: [[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]]
+  };
+  var LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  function buildSearch(words, size, dirs){
+    for (var attempt = 0; attempt < 80; attempt++) {
+      var g = [];
+      for (var r = 0; r < size; r++) { var row = []; for (var c = 0; c < size; c++) row.push(''); g.push(row); }
+      var order = words.slice().sort(function(a, b){ return b.length - a.length; });
+      var placed = [], ok = true;
+      for (var wi = 0; wi < order.length && ok; wi++) {
+        var w = order[wi], done = false;
+        for (var t = 0; t < 400 && !done; t++) {
+          var d = dirs[Math.floor(Math.random() * dirs.length)];
+          var r0 = Math.floor(Math.random() * size), c0 = Math.floor(Math.random() * size);
+          var r1 = r0 + d[0] * (w.length - 1), c1 = c0 + d[1] * (w.length - 1);
+          if (r1 < 0 || r1 >= size || c1 < 0 || c1 >= size) continue;
+          var fit = true;
+          for (var i = 0; i < w.length; i++) {
+            var ch = g[r0 + d[0] * i][c0 + d[1] * i];
+            if (ch && ch !== w[i]) { fit = false; break; }
+          }
+          if (!fit) continue;
+          for (var j = 0; j < w.length; j++) g[r0 + d[0] * j][c0 + d[1] * j] = w[j];
+          placed.push({ w: w, r: r0, c: c0, d: d });
+          done = true;
+        }
+        if (!done) ok = false;
+      }
+      if (ok) {
+        for (var rr = 0; rr < size; rr++) for (var cc = 0; cc < size; cc++) {
+          if (!g[rr][cc]) g[rr][cc] = LETTERS.charAt(Math.floor(Math.random() * 26));
+        }
+        return { g: g, placed: placed };
+      }
+    }
+    return null;
+  }
+  // END-WS
+
+  // BEGIN-CW
+  function cwTry(entries){
+    var MAXDIM = 15, grid = {}, used = {}, cells = [], placed = [], bb = null;
+    function nbb(w, r, c, d){
+      var r2 = r + (d === 'D' ? w.length - 1 : 0), c2 = c + (d === 'A' ? w.length - 1 : 0);
+      if (!bb) return [r, r2, c, c2];
+      return [Math.min(bb[0], r), Math.max(bb[1], r2), Math.min(bb[2], c), Math.max(bb[3], c2)];
+    }
+    function can(w, r, c, d){
+      var dr = d === 'D' ? 1 : 0, dc = d === 'A' ? 1 : 0, b = nbb(w, r, c, d);
+      if (b[1] - b[0] + 1 > MAXDIM || b[3] - b[2] + 1 > MAXDIM) return 0;
+      if (grid[(r - dr) + ',' + (c - dc)]) return 0;
+      if (grid[(r + dr * w.length) + ',' + (c + dc * w.length)]) return 0;
+      var inter = 0;
+      for (var i = 0; i < w.length; i++) {
+        var rr = r + dr * i, cc = c + dc * i, k = rr + ',' + cc;
+        if (grid[k]) {
+          if (grid[k] !== w.charAt(i)) return 0;
+          if (used[k][d]) return 0;
+          inter++;
+        } else if (grid[(rr + dc) + ',' + (cc + dr)] || grid[(rr - dc) + ',' + (cc - dr)]) {
+          return 0;
+        }
+      }
+      if (placed.length && inter === 0) return 0;
+      return inter;
+    }
+    function put(w, r, c, d){
+      bb = nbb(w, r, c, d);
+      var dr = d === 'D' ? 1 : 0, dc = d === 'A' ? 1 : 0;
+      for (var i = 0; i < w.length; i++) {
+        var rr = r + dr * i, cc = c + dc * i, k = rr + ',' + cc;
+        if (!grid[k]) { grid[k] = w.charAt(i); used[k] = {}; cells.push([rr, cc, w.charAt(i)]); }
+        used[k][d] = true;
+      }
+      placed.push({ w: w, r: r, c: c, d: d });
+    }
+    var order = entries.map(function(e){ return { e: e, k: -e.w.length + Math.random() * 3 }; })
+      .sort(function(a, b){ return a.k - b.k; }).map(function(x){ return x.e; });
+    put(order[0].w, 0, 0, 'A');
+    var pending = order.slice(1);
+    for (var pass = 0; pass < 3; pass++) {
+      var rest = [];
+      pending.forEach(function(e){
+        var w = e.w, cands = [];
+        cells.slice().forEach(function(cell){
+          for (var i = 0; i < w.length; i++) {
+            if (w.charAt(i) !== cell[2]) continue;
+            ['A', 'D'].forEach(function(d){
+              var r = cell[0] - (d === 'D' ? i : 0), c = cell[1] - (d === 'A' ? i : 0);
+              var inter = can(w, r, c, d);
+              if (inter) cands.push({ k: -inter + Math.random() * 1.5, r: r, c: c, d: d });
+            });
+          }
+        });
+        if (cands.length) {
+          cands.sort(function(a, b){ return a.k - b.k; });
+          put(w, cands[0].r, cands[0].c, cands[0].d);
+        } else rest.push(e);
+      });
+      pending = rest;
+    }
+    var area = (bb[1] - bb[0] + 1) * (bb[3] - bb[2] + 1), inters = 0;
+    Object.keys(used).forEach(function(k){ if (used[k].A && used[k].D) inters++; });
+    return { placed: placed, grid: grid, bb: bb, score: placed.length * 1000 + inters * 15 - area };
+  }
+  function cwValid(data, count){
+    var names = {};
+    data.across.concat(data.down).forEach(function(e){ names[e.ans] = 1; });
+    if (Object.keys(names).length !== count) return false;
+    var runs = [], r, c;
+    for (r = 0; r < data.rows; r++) data.grid[r].split('.').forEach(function(p){ if (p.length > 1) runs.push(p); });
+    for (c = 0; c < data.cols; c++) {
+      var col = '';
+      for (r = 0; r < data.rows; r++) col += data.grid[r].charAt(c);
+      col.split('.').forEach(function(p){ if (p.length > 1) runs.push(p); });
+    }
+    if (runs.length !== count) return false;
+    for (var i = 0; i < runs.length; i++) if (!names[runs[i]]) return false;
+    var ok = true;
+    data.across.forEach(function(e){ for (var k = 0; k < e.ans.length; k++) if (data.grid[e.r].charAt(e.c + k) !== e.ans.charAt(k)) ok = false; });
+    data.down.forEach(function(e){ for (var k = 0; k < e.ans.length; k++) if (data.grid[e.r + k].charAt(e.c) !== e.ans.charAt(k)) ok = false; });
+    return ok;
+  }
+  function cwFinalize(res, clueOf){
+    var bb = res.bb, rows = bb[1] - bb[0] + 1, cols = bb[3] - bb[2] + 1, L = [], r, c;
+    for (r = 0; r < rows; r++) { var row = []; for (c = 0; c < cols; c++) row.push('.'); L.push(row); }
+    Object.keys(res.grid).forEach(function(k){ var p = k.split(','); L[+p[0] - bb[0]][+p[1] - bb[2]] = res.grid[k]; });
+    var starts = {};
+    res.placed.forEach(function(p){ starts[(p.r - bb[0]) + ',' + (p.c - bb[2]) + ',' + p.d] = p.w; });
+    var n = 0, across = [], down = [];
+    for (r = 0; r < rows; r++) for (c = 0; c < cols; c++) {
+      var a = starts[r + ',' + c + ',A'], d = starts[r + ',' + c + ',D'];
+      if (a || d) {
+        n++;
+        if (a) across.push({ n: n, r: r, c: c, ans: a, clue: clueOf[a] });
+        if (d) down.push({ n: n, r: r, c: c, ans: d, clue: clueOf[d] });
+      }
+    }
+    var data = { rows: rows, cols: cols, grid: L.map(function(x){ return x.join(''); }), across: across, down: down };
+    return cwValid(data, res.placed.length) ? data : null;
+  }
+  function genCrossword(entries, budgetMs){
+    var clueOf = {}; entries.forEach(function(e){ clueOf[e.w] = e.c; });
+    var best = null, t0 = Date.now();
+    for (var it = 0; it < 8000; it++) {
+      var res = cwTry(entries);
+      if (!best || res.score > best.score) {
+        var d = cwFinalize(res, clueOf);
+        if (d) best = { score: res.score, data: d, count: res.placed.length };
+      }
+      var el = Date.now() - t0;
+      if (best && ((el > budgetMs && best.count >= Math.min(12, entries.length)) || el > 2500)) break;
+    }
+    return best ? best.data : null;
+  }
+  // END-CW
+
+  var SIZE = 14;
+  var ws = { terms: [], puzzle: null, found: {}, start: null, cur: null, cells: [], hintUsed: false, showAll: false };
+  var wsGrid = $('#ws-grid'), wsList = $('#ws-list'), wsStatus = $('#ws-status');
+
+  function burnWs(){ ws.terms.forEach(function(t){ burn('ws', t.c, t.w); }); }
+  function wsEmpty(){
+    ws.terms = []; ws.puzzle = null; ws.found = {}; ws.start = null; ws.cur = null; ws.cells = [];
+    ws.level = $('#ws-level').value; ws.revealed = {}; ws.listMode = false; ws.listPaid = false; ws.assisted = true; ws.bonusDone = true;
+    wsGrid.innerHTML = ''; wsList.innerHTML = '';
+    wsStatus.textContent = OUT_ALL; wsStatus.className = 'status';
+    updateListBtn(); drawLeft();
+  }
+  function wsInit(){
+    var level = $('#ws-level').value, p = null;
+    for (var k = 0; k < 20 && !p; k++) {
+      ws.terms = sample(14, null, 'ws');
+      if (ws.terms.length < 4) { wsEmpty(); return; }
+      p = buildSearch(ws.terms.map(function(t){ return t.w; }), SIZE, DIRS[level]);
+    }
+    ws.puzzle = p; ws.found = {}; ws.start = null; ws.cur = null; ws.hintUsed = false; ws.showAll = false;
+    ws.level = level; ws.revealed = {}; ws.listMode = false; ws.listPaid = false; ws.assisted = false; ws.bonusDone = false;
+    $('#ws-show').textContent = 'Show all words'; updateListBtn();
+    hintBtn($('#ws-hint'), false);
+    wsGrid.innerHTML = ''; ws.cells = [];
+    for (var r = 0; r < SIZE; r++) { ws.cells.push([]); for (var c = 0; c < SIZE; c++) {
+      var el = document.createElement('div');
+      el.className = 'ws-cell'; el.setAttribute('data-r', r); el.setAttribute('data-c', c);
+      el.textContent = p.g[r][c];
+      wsGrid.appendChild(el); ws.cells[r].push(el);
+    } }
+    wsRenderList(); wsStatus.textContent = ''; wsStatus.className = 'status';
+    drawLeft();
+  }
+
+  function updateListBtn(){
+    $('#ws-list-btn').textContent = ws.listMode ? 'Back to clues' : (ws.listPaid ? 'Show word list' : 'Show word list (\u2212' + WS_LIST + ')');
+  }
+  function wsRenderList(){
+    wsList.className = 'ws-list' + (ws.listMode ? '' : ' clues');
+    wsList.innerHTML = '';
+    ws.terms.forEach(function(t){
+      var li = document.createElement('li'), done = !!ws.found[t.w];
+      if (done) li.className = 'done';
+      if (ws.listMode) li.innerHTML = '<span class="w">' + t.w + '</span>';
+      else if (done) li.innerHTML = '<span class="rev">' + t.w + '</span> <span class="w">' + t.c + '</span>';
+      else if (ws.revealed[t.w]) li.innerHTML = '<span class="rev">' + t.w + '</span><span>' + t.c + '</span>';
+      else li.innerHTML = '<span>' + t.c + '</span><button class="rv" type="button" data-w="' + t.w + '">Reveal word (\u2212' + WS_REVEAL + ')</button>';
+      wsList.appendChild(li);
+    });
+    var n = Object.keys(ws.found).length, total = ws.terms.length;
+    if (n === total) { wsStatus.textContent = 'All ' + total + ' found. Nice work.'; wsStatus.className = 'status good'; }
+    else if (n > 0) { wsStatus.textContent = n + ' of ' + total + ' found.'; wsStatus.className = 'status'; }
+  }
+  wsList.addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('button.rv') : null;
+    if (!b) return;
+    var w = b.getAttribute('data-w');
+    if (ws.found[w] || ws.revealed[w]) return;
+    ws.revealed[w] = 1; spend('ws', WS_REVEAL, 'revealed a word');
+    ws.terms.forEach(function(t){ if (t.w === w) burn('ws', t.c, t.w); });
+    wsRenderList();
+  });
+  $('#ws-list-btn').addEventListener('click', function(){
+    if (!ws.puzzle) return;
+    if (!ws.listMode && !ws.listPaid) { ws.listPaid = true; burnWs(); spend('ws', WS_LIST, 'showed the word list'); }
+    ws.listMode = !ws.listMode; updateListBtn(); wsRenderList();
+  });
+
+  function wsCellFromPoint(x, y){
+    var el = document.elementFromPoint(x, y);
+    if (!el) return null;
+    el = el.closest ? el.closest('.ws-cell') : null;
+    return el ? { r: +el.getAttribute('data-r'), c: +el.getAttribute('data-c') } : null;
+  }
+  function wsPath(){
+    if (!ws.start) return [];
+    var dr = ws.cur.r - ws.start.r, dc = ws.cur.c - ws.start.c;
+    if (!(dr === 0 || dc === 0 || Math.abs(dr) === Math.abs(dc))) return [ws.start];
+    var len = Math.max(Math.abs(dr), Math.abs(dc)) + 1;
+    var sr = Math.sign(dr), sc = Math.sign(dc), out = [];
+    for (var i = 0; i < len; i++) out.push({ r: ws.start.r + sr * i, c: ws.start.c + sc * i });
+    return out;
+  }
+  function wsDraw(){
+    $$('.ws-cell.sel', wsGrid).forEach(function(e){ e.classList.remove('sel'); });
+    wsPath().forEach(function(p){ ws.cells[p.r][p.c].classList.add('sel'); });
+  }
+  wsGrid.addEventListener('pointerdown', function(e){
+    var c = wsCellFromPoint(e.clientX, e.clientY); if (!c) return;
+    ws.start = c; ws.cur = c; wsDraw();
+    try { wsGrid.setPointerCapture(e.pointerId); } catch(err){}
+    e.preventDefault();
+  });
+  wsGrid.addEventListener('pointermove', function(e){
+    if (!ws.start) return;
+    var c = wsCellFromPoint(e.clientX, e.clientY);
+    if (c) { ws.cur = c; wsDraw(); }
+  });
+  wsGrid.addEventListener('pointerup', function(){
+    if (!ws.start || !ws.puzzle) return;
+    var path = wsPath();
+    if (path.length > 1) {
+      var s = path.map(function(p){ return ws.puzzle.g[p.r][p.c]; }).join('');
+      var rev = s.split('').reverse().join(''), hit = null;
+      ws.terms.forEach(function(t){ if (!ws.found[t.w] && (t.w === s || t.w === rev)) hit = t.w; });
+      if (hit) {
+        ws.found[hit] = 1;
+        path.forEach(function(p){ ws.cells[p.r][p.c].classList.add('found'); });
+        var tt = ws.terms.filter(function(x){ return x.w === hit; })[0], bn = tt.t ? TRICKY : 0;
+        burn('ws', tt.c, tt.w);
+        if (!ws.assisted && !ws.revealed[hit]) add('ws', WS_PTS[ws.level] + bn, 'found ' + hit + (bn ? ' (tricky +' + bn + ')' : ''));
+        if (!ws.assisted && !ws.bonusDone && Object.keys(ws.found).length === ws.terms.length && !Object.keys(ws.revealed).length) {
+          ws.bonusDone = true; add('ws', Math.round(WS_BONUS[ws.level] * ws.terms.length / 14), 'every word found');
+        }
+        wsRenderList();
+      }
+    }
+    ws.start = null; ws.cur = null; wsDraw();
+  });
+  wsGrid.addEventListener('pointercancel', function(){ ws.start = null; ws.cur = null; wsDraw(); });
+
+  $('#ws-new').addEventListener('click', wsInit);
+  $('#ws-level').addEventListener('change', wsInit);
+    $('#ws-hint').addEventListener('click', function(){
+    if (ws.hintUsed || !ws.puzzle) return;
+    var left = ws.puzzle.placed.filter(function(p){ return !ws.found[p.w]; });
+    if (!left.length) return;
+    ws.hintUsed = true; hintBtn($('#ws-hint'), true); spend('ws', WS_HINT, 'word search hint');
+    var p = left[Math.floor(Math.random() * left.length)], el = ws.cells[p.r][p.c];
+    el.classList.add('hint');
+    setTimeout(function(){ el.classList.remove('hint'); }, 3000);
+  });
+  $('#ws-show').addEventListener('click', function(){
+    if (!ws.puzzle) return;
+    ws.showAll = !ws.showAll;
+    if (ws.showAll) burnWs();
+    if (ws.showAll && !ws.assisted) { ws.assisted = true; note('Teacher view used: no more points on this grid.'); }
+    ws.puzzle.placed.forEach(function(p){
+      for (var i = 0; i < p.w.length; i++) ws.cells[p.r + p.d[0] * i][p.c + p.d[1] * i].classList.toggle('teach', ws.showAll);
+    });
+    $('#ws-show').textContent = ws.showAll ? 'Hide all words' : 'Show all words';
+  });
+
+  /* ---------- crossword ---------- */
+  var cw = null;
+  function cwEmpty(){
+    cw = null;
+    $('#cw-grid').innerHTML = ''; $('#cw-across').innerHTML = ''; $('#cw-down').innerHTML = ''; $('#cw-banner').textContent = '';
+    var st = $('#cw-status'); st.textContent = OUT_ALL; st.className = 'status';
+    drawLeft();
+  }
+  function cwInit(){
+    var size = $('#cw-size').value;
+    var picked = sample(CW_N[size], null, 'cw'), tmap = {};
+    if (picked.length < 6) { cwEmpty(); return; }
+    picked.forEach(function(t){ tmap[t.w] = t.t; });
+    var data = genCrossword(picked.map(function(t){ return { w: t.w, c: t.c }; }), 700);
+    if (!data) { $('#cw-status').textContent = 'Could not build a crossword. Press New puzzle.'; return; }
+    cw = { data: data, entries: [], at: {}, inputs: {}, els: {}, cur: null, hintUsed: false, size: size, tricky: tmap, awarded: {}, free: {}, bonusDone: false };
+    hintBtn($('#cw-hint'), false);
+    data.across.forEach(function(e){ cw.entries.push({ n: e.n, dir: 'A', r: e.r, c: e.c, ans: e.ans, clue: e.clue }); });
+    data.down.forEach(function(e){ cw.entries.push({ n: e.n, dir: 'D', r: e.r, c: e.c, ans: e.ans, clue: e.clue }); });
+    var grid = $('#cw-grid'); grid.innerHTML = ''; grid.style.setProperty('--cols', data.cols);
+    var nums = {};
+    cw.entries.forEach(function(e){
+      nums[e.r + ',' + e.c] = e.n;
+      for (var i = 0; i < e.ans.length; i++) {
+        var r = e.r + (e.dir === 'D' ? i : 0), c = e.c + (e.dir === 'A' ? i : 0);
+        var k = r + ',' + c; cw.at[k] = cw.at[k] || {}; cw.at[k][e.dir] = e;
+      }
+    });
+    for (var r = 0; r < data.rows; r++) for (var c = 0; c < data.cols; c++) {
+      var k = r + ',' + c, cell = document.createElement('div');
+      if (data.grid[r].charAt(c) === '.') { cell.className = 'cw-cell blk'; grid.appendChild(cell); continue; }
+      cell.className = 'cw-cell';
+      var inp = document.createElement('input');
+      inp.type = 'text'; inp.maxLength = 1; inp.autocomplete = 'off'; inp.autocapitalize = 'characters'; inp.spellcheck = false;
+      inp.setAttribute('aria-label', 'Row ' + (r + 1) + ' column ' + (c + 1));
+      if (nums[k]) { var sp = document.createElement('span'); sp.className = 'n'; sp.textContent = nums[k]; cell.appendChild(sp); }
+      cell.appendChild(inp); grid.appendChild(cell);
+      cw.inputs[k] = inp; cw.els[k] = cell;
+      cwWire(inp, r, c);
+    }
+    cwClues();
+    var first = cw.entries.filter(function(e){ return e.dir === 'A'; })[0] || cw.entries[0];
+    cwSet(first.r, first.c, first.dir, false);
+    $('#cw-status').textContent = ''; $('#cw-status').className = 'status';
+    drawLeft();
+  }
+
+  function cwCells(e){
+    var out = [];
+    for (var i = 0; i < e.ans.length; i++) out.push((e.r + (e.dir === 'D' ? i : 0)) + ',' + (e.c + (e.dir === 'A' ? i : 0)));
+    return out;
+  }
+  function cwSet(r, c, dir, focus){
+    var k = r + ',' + c, slot = cw.at[k]; if (!slot) return;
+    if (!slot[dir]) dir = dir === 'A' ? 'D' : 'A';
+    cw.cur = { r: r, c: c, dir: dir, e: slot[dir] };
+    Object.keys(cw.els).forEach(function(x){ cw.els[x].classList.remove('inword', 'cur'); });
+    cwCells(slot[dir]).forEach(function(x){ cw.els[x].classList.add('inword'); });
+    cw.els[k].classList.add('cur');
+    $$('.cw-clues button').forEach(function(b){ b.classList.toggle('cur', b.getAttribute('data-n') === slot[dir].n + dir); });
+    $('#cw-banner').innerHTML = '<b>' + slot[dir].n + (dir === 'A' ? ' Across' : ' Down') + '</b>' + slot[dir].clue + ' (' + slot[dir].ans.length + ')';
+    if (focus !== false) cw.inputs[k].focus();
+  }
+  function cwStep(delta){
+    var cells = cwCells(cw.cur.e), i = cells.indexOf(cw.cur.r + ',' + cw.cur.c), n = i + delta;
+    if (n < 0 || n >= cells.length) return;
+    var p = cells[n].split(',');
+    cwSet(+p[0], +p[1], cw.cur.dir, true);
+  }
+  function cwMove(dr, dc){
+    var r = cw.cur.r + dr, c = cw.cur.c + dc;
+    while (r >= 0 && r < cw.data.rows && c >= 0 && c < cw.data.cols) {
+      if (cw.inputs[r + ',' + c]) { cwSet(r, c, cw.cur.dir, true); return; }
+      r += dr; c += dc;
+    }
+  }
+  function cwWire(inp, r, c){
+    var k = r + ',' + c;
+    inp.addEventListener('click', function(){
+      if (cw.cur && cw.cur.r === r && cw.cur.c === c) cwSet(r, c, cw.cur.dir === 'A' ? 'D' : 'A', false);
+      else cwSet(r, c, cw.cur ? cw.cur.dir : 'A', false);
+      inp.select();
+    });
+    inp.addEventListener('focus', function(){
+      if (!cw.cur || cw.cur.r !== r || cw.cur.c !== c) cwSet(r, c, cw.cur ? cw.cur.dir : 'A', false);
+    });
+    inp.addEventListener('input', function(){
+      var v = inp.value.replace(/[^a-zA-Z]/g, '').slice(-1).toUpperCase();
+      inp.value = v; cw.els[k].classList.remove('wrong');
+      cwRefresh();
+      if (v) cwStep(1);
+    });
+    inp.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowRight') { e.preventDefault(); cwMove(0, 1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); cwMove(0, -1); }
+      else if (e.key === 'ArrowDown') { e.preventDefault(); cwMove(1, 0); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); cwMove(-1, 0); }
+      else if (e.key === 'Backspace') {
+        e.preventDefault();
+        if (inp.value) { inp.value = ''; cw.els[k].classList.remove('wrong'); cwRefresh(); }
+        else cwStep(-1);
+      }
+      else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cwSet(r, c, cw.cur.dir === 'A' ? 'D' : 'A', true); }
+    });
+  }
+  function cwClues(){
+    ['A', 'D'].forEach(function(d){
+      var ol = $(d === 'A' ? '#cw-across' : '#cw-down'); ol.innerHTML = '';
+      cw.entries.filter(function(e){ return e.dir === d; }).forEach(function(e){
+        var li = document.createElement('li'), b = document.createElement('button');
+        b.type = 'button'; b.setAttribute('data-n', e.n + d);
+        b.innerHTML = '<span class="num">' + e.n + '</span>' + e.clue + ' (' + e.ans.length + ')';
+        b.addEventListener('click', function(){ cwSet(e.r, e.c, d, true); });
+        li.appendChild(b); ol.appendChild(li);
+      });
+    });
+  }
+  function cwSolution(k){ var p = k.split(','); return cw.data.grid[+p[0]].charAt(+p[1]); }
+  function cwRefresh(){
+    var all = true;
+    Object.keys(cw.inputs).forEach(function(k){ if (cw.inputs[k].value !== cwSolution(k)) all = false; });
+    cw.entries.forEach(function(e){
+      var ok = cwCells(e).every(function(k){ return cw.inputs[k].value === cwSolution(k); });
+      var b = $('.cw-clues button[data-n="' + e.n + e.dir + '"]'); if (b) b.classList.toggle('done', ok);
+      var id = e.n + e.dir;
+      if (ok || cwCells(e).some(function(k){ return cw.free[k]; })) burn('cw', e.clue, e.ans);
+      if (ok && !cw.awarded[id] && !cwCells(e).some(function(k){ return cw.free[k]; })) {
+        cw.awarded[id] = 1;
+        var bn = cw.tricky[e.ans] ? TRICKY : 0;
+        add('cw', CW_PPW[cw.size] + bn, 'crossword word ' + e.ans + (bn ? ' (tricky +' + bn + ')' : ''));
+      }
+    });
+    var st = $('#cw-status');
+    if (all) {
+      if (!cw.bonusDone && !Object.keys(cw.free).length) { cw.bonusDone = true; add('cw', Math.round(0.15 * CW_PPW[cw.size] * cw.entries.length), 'crossword finished'); }
+      st.textContent = 'Crossword complete. Every square is right.'; st.className = 'status good';
+    }
+    else { st.textContent = ''; st.className = 'status'; }
+  }
+  function cwFill(k, free){ cw.inputs[k].value = cwSolution(k); cw.els[k].classList.remove('wrong'); if (free) cw.free[k] = 1; }
+  $('#cw-check').addEventListener('click', function(){
+    if (!cw) return;
+    var bad = 0;
+    Object.keys(cw.inputs).forEach(function(k){
+      var v = cw.inputs[k].value, wrong = v && v !== cwSolution(k);
+      cw.els[k].classList.toggle('wrong', !!wrong); if (wrong) bad++;
+    });
+    var st = $('#cw-status');
+    if (bad) { st.textContent = bad + (bad === 1 ? ' square is' : ' squares are') + ' wrong. They are shaded red. This check cost ' + CW_CHECK + ' point.'; st.className = 'status'; spend('cw', CW_CHECK, 'check found a wrong letter'); }
+    else if (st.className.indexOf('good') < 0) { st.textContent = 'No wrong letters so far.'; st.className = 'status'; }
+  });
+  $('#cw-hint').addEventListener('click', function(){
+    if (!cw || cw.hintUsed) return;
+    var k = cw.cur.r + ',' + cw.cur.c, st = $('#cw-status');
+    if (cw.inputs[k].value === cwSolution(k)) { st.textContent = 'That square is already right. Select a different square for your hint.'; st.className = 'status'; return; }
+    cwFill(k); cw.hintUsed = true; hintBtn($('#cw-hint'), true); spend('cw', CW_HINT, 'crossword hint'); cwRefresh();
+  });
+  $('#cw-rl').addEventListener('click', function(){ if (cw) { cwFill(cw.cur.r + ',' + cw.cur.c, true); cwRefresh(); } });
+  $('#cw-rw').addEventListener('click', function(){ if (cw) { cwCells(cw.cur.e).forEach(function(k){ cwFill(k, true); }); cwRefresh(); } });
+  $('#cw-ra').addEventListener('click', function(){ if (cw) { Object.keys(cw.inputs).forEach(function(k){ cwFill(k, true); }); cwRefresh(); } });
+  $('#cw-clear').addEventListener('click', function(){
+    if (!cw) return;
+    cw.free = {};
+    Object.keys(cw.inputs).forEach(function(k){ cw.inputs[k].value = ''; cw.els[k].classList.remove('wrong'); });
+    cwRefresh();
+  });
+  $('#cw-new').addEventListener('click', cwInit);
+
+  /* ---------- scramble ---------- */
+  var sc = null;
+  function scramble(w){
+    if (w.length < 2) return w;
+    var s; do { s = shuffle(w.split('')).join(''); } while (s === w);
+    return s;
+  }
+  function scInit(){
+    var lv = $('#sc-level').value;
+    var q = sample(8, SC_LEN[lv], 'sc');
+    sc = { queue: q, total: q.length, solved: 0, hintUsed: false, level: lv, wrongs: {}, assist: {}, pts: 0 };
+    hintBtn($('#sc-hint'), false);
+    if (!q.length) {
+      $('#sc-card').hidden = true;
+      var sst = $('#sc-status'); sst.textContent = OUT_LVL; sst.className = 'status';
+      drawLeft(); return;
+    }
+    $('#sc-card').hidden = false;
+    scShow(); drawLeft();
+  }
+  function scShow(){
+    var st = $('#sc-status');
+    if (!sc.queue.length) {
+      $('#sc-card').hidden = true;
+      st.textContent = 'Solved all ' + sc.total + ' words' + (sc.hintUsed ? ' using your hint.' : ' without using your hint.') + ' Word points this set: ' + sc.pts + '.';
+      st.className = 'status good'; return;
+    }
+    var cur = sc.queue[0];
+    $('#sc-count').textContent = 'Word ' + (sc.solved + 1) + ' of ' + sc.total;
+    $('#sc-letters').innerHTML = scramble(cur.w).split('').map(function(ch){ return '<span>' + ch + '</span>'; }).join('');
+    $('#sc-clue').textContent = cur.c;
+    $('#sc-in').value = ''; $('#sc-hinttext').textContent = '';
+    st.textContent = ''; st.className = 'status';
+  }
+  function scCheck(){
+    var guess = $('#sc-in').value.trim().toUpperCase(), st = $('#sc-status');
+    if (!guess) return;
+    if (guess === sc.queue[0].w) {
+      var cw0 = sc.queue[0].w, got = 0;
+      burn('sc', '', cw0);
+      if (!sc.assist[cw0]) { got = Math.max(1, SC_BASE[sc.level] - (sc.wrongs[cw0] || 0)) + (sc.queue[0].t ? TRICKY : 0); sc.pts += got; add('sc', got, 'scramble word solved'); }
+      sc.queue.shift(); sc.solved++; scShow();
+      if (sc.queue.length) { st.textContent = got ? 'Correct. +' + got + ' points.' : 'Correct. No points: the answer was shown.'; st.className = 'status good'; }
+    } else {
+      var inp = $('#sc-in'); inp.classList.remove('shake'); void inp.offsetWidth; inp.classList.add('shake');
+      var cw1 = sc.queue[0].w; sc.wrongs[cw1] = (sc.wrongs[cw1] || 0) + 1;
+      st.textContent = 'Not quite. Try again. Each wrong try takes 1 point off this word.'; st.className = 'status';
+    }
+  }
+  $('#sc-check').addEventListener('click', scCheck);
+  $('#sc-in').addEventListener('keydown', function(e){ if (e.key === 'Enter') scCheck(); });
+  $('#sc-hint').addEventListener('click', function(){
+    if (sc.hintUsed || !sc.queue.length) return;
+    var w = sc.queue[0].w; sc.hintUsed = true; hintBtn($('#sc-hint'), true); spend('sc', SC_HINT, 'scramble hint');
+    $('#sc-hinttext').textContent = 'It has ' + w.length + ' letters and starts with ' + w.charAt(0) + '.';
+  });
+  $('#sc-skip').addEventListener('click', function(){ if (!sc.queue.length) return; sc.queue.push(sc.queue.shift()); scShow(); });
+  $('#sc-ans').addEventListener('click', function(){ if (sc.queue.length) { sc.assist[sc.queue[0].w] = 1; burn('sc', '', sc.queue[0].w); $('#sc-hinttext').textContent = 'Answer: ' + sc.queue[0].w; } });
+  $('#sc-again').addEventListener('click', scInit);
+
+  /* ---------- hangman ---------- */
+  var hm = null;
+  var hmKeys = $('#hm-keys'), hmWord = $('#hm-word'), hmStatus = $('#hm-status');
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(function(L){
+    var b = document.createElement('button');
+    b.type = 'button'; b.textContent = L; b.setAttribute('data-l', L); b.setAttribute('aria-label', 'Letter ' + L);
+    b.addEventListener('click', function(){ hmGuess(L); });
+    hmKeys.appendChild(b);
+  });
+  function hmInit(){
+    var lv = $('#hm-level').value;
+    var q = sample(6, null, 'hm');
+    hm = { queue: q, total: q.length, round: 0, wins: 0, hintUsed: false, word: '', clue: '', guessed: {}, wrong: 0, over: false, revealed: false, ended: false, level: lv, max: HM_MAX[lv], pts: 0, sawClue: true };
+    if (!q.length) { hm.over = true; hm.ended = true; hm.clue = OUT_ALL; hmStatus.textContent = OUT_ALL; hmStatus.className = 'status'; hmDraw(); drawLeft(); return; }
+    hmNext(); drawLeft();
+  }
+  function hmNext(){
+    var t = hm.queue.shift();
+    hm.sawClue = $('#hm-clue').checked; hm.tricky = !!t.t;
+    hm.round++; hm.word = t.w; hm.clue = t.c; hm.guessed = {}; hm.wrong = 0; hm.over = false; hm.revealed = false;
+    hmStatus.className = 'status'; hmStatus.textContent = '';
+    hmDraw();
+  }
+  function hmWon(){ return hm.word.split('').every(function(ch){ return hm.guessed[ch]; }); }
+  function hmDraw(){
+    var show = hm.revealed || (hm.over && isTeacher());
+    hmWord.innerHTML = hm.word.split('').map(function(ch){
+      if (hm.guessed[ch]) return '<span>' + ch + '</span>';
+      return show ? '<span class="miss">' + ch + '</span>' : '<span>&nbsp;</span>';
+    }).join('');
+    $$('button', hmKeys).forEach(function(b){
+      var L = b.getAttribute('data-l'), g = !!hm.guessed[L];
+      b.disabled = g || hm.over;
+      b.className = g ? (hm.word.indexOf(L) > -1 ? 'ok' : 'no') : '';
+    });
+    var level = Math.min(1, 0.1 + 0.9 * hm.wrong / hm.max), h = 162 * level, liq = $('#hm-liq');
+    liq.setAttribute('height', h); liq.setAttribute('y', 194 - h);
+    $('#hm-svg').classList.toggle('bk-lost', hm.over && !hmWon());
+    $('#hm-lives').textContent = 'Wrong guesses: ' + hm.wrong + ' of ' + hm.max;
+    $('#hm-count').textContent = 'Word ' + hm.round + ' of ' + hm.total;
+    $('#hm-clue-text').textContent = ($('#hm-clue').checked || hm.over) ? hm.clue : 'Clue hidden. Tick "Show the clue" if you want it.';
+    hintBtn($('#hm-hint'), hm.hintUsed);
+    if (!hm.hintUsed && hm.over) $('#hm-hint').disabled = true;
+    var nb = $('#hm-next');
+    nb.textContent = hm.ended ? 'New game' : 'Next word';
+    nb.disabled = !hm.over;
+  }
+  function hmGuess(L){
+    if (!hm || hm.over || hm.guessed[L]) return;
+    hm.guessed[L] = 1;
+    if (hm.word.indexOf(L) < 0) hm.wrong++;
+    hmAfter();
+  }
+  function hmAfter(){
+    var won = hmWon(), lost = !won && hm.wrong >= hm.max;
+    if (won || lost) {
+      hm.over = true; burn('hm', '', hm.word);
+      var got = 0;
+      if (won) {
+        hm.wins++;
+        if (!hm.revealed) {
+          got = HM_BASE[hm.level] + (hm.max - hm.wrong) + (hm.sawClue ? 0 : HM_NOCLUE) + (hm.tricky ? TRICKY : 0);
+          hm.pts += got; add('hm', got, 'hangman word solved');
+        }
+      }
+      if (!hm.queue.length) hm.ended = true;
+      var msg = won ? 'Solved. The word is ' + hm.word + '.' + (got ? ' +' + got + ' points.' : ' No points: the word was shown.')
+                    : 'The beaker overflowed. No points for this word.';
+      if (hm.ended) msg += ' Game over: ' + hm.wins + ' of ' + hm.total + ' solved, ' + hm.pts + ' word points.';
+      hmStatus.textContent = msg; hmStatus.className = 'status' + (won ? ' good' : '');
+    }
+    hmDraw();
+  }
+  $('#hm-hint').addEventListener('click', function(){
+    if (hm.over || hm.hintUsed) return;
+    var left = hm.word.split('').filter(function(ch){ return !hm.guessed[ch]; });
+    if (!left.length) return;
+    hm.hintUsed = true; spend('hm', HM_HINT, 'hangman hint');
+    hm.guessed[left[Math.floor(Math.random() * left.length)]] = 1;
+    hmAfter();
+  });
+  $('#hm-next').addEventListener('click', function(){ if (!hm.over) return; if (hm.ended) hmInit(); else hmNext(); });
+  $('#hm-clue').addEventListener('change', function(){ if ($('#hm-clue').checked && hm && !hm.over) hm.sawClue = true; hmDraw(); });
+  $('#hm-level').addEventListener('change', hmInit);
+  $('#hm-reveal').addEventListener('click', function(){ if (!hm.word) return; hm.revealed = true; burn('hm', '', hm.word); hmDraw(); });
+  document.addEventListener('keydown', function(e){
+    if ($('#p-hm').hidden || !hm) return;
+    var tag = e.target && e.target.tagName ? e.target.tagName : '';
+    if (/^(INPUT|SELECT|TEXTAREA)$/.test(tag) || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (/^[a-zA-Z]$/.test(e.key)) hmGuess(e.key.toUpperCase());
+    else if (e.key === 'Enter' && hm.over && tag !== 'BUTTON') { if (hm.ended) hmInit(); else hmNext(); }
+  });
+
+  /* ---------- teacher gate ---------- */
+  function setTeacher(on){
+    document.body.classList.toggle('teacher', on);
+    $('#tbanner').hidden = !on;
+    $('#t-form').hidden = true; $('#t-code').value = ''; $('#t-msg').textContent = '';
+    if (hm) hmDraw();
+  }
+  function sha256hex(s){
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)).then(function(buf){
+      return Array.prototype.map.call(new Uint8Array(buf), function(b){ return ('0' + b.toString(16)).slice(-2); }).join('');
+    });
+  }
+  function tryTeacher(){
+    var msg = $('#t-msg'), code = $('#t-code').value.trim().toLowerCase();
+    if (!code) return;
+    if (!window.crypto || !window.crypto.subtle) { msg.textContent = 'Teacher unlock is not available in this browser.'; return; }
+    sha256hex('bio2627|' + code).then(function(h){
+      if (h === T_HASH) setTeacher(true);
+      else { msg.textContent = 'That code is not right.'; $('#t-code').value = ''; }
+    }, function(){ msg.textContent = 'Teacher unlock is not available in this browser.'; });
+  }
+  $('#t-open').addEventListener('click', function(){
+    var f = $('#t-form'); f.hidden = !f.hidden;
+    if (!f.hidden) $('#t-code').focus();
+  });
+  $('#t-go').addEventListener('click', tryTeacher);
+  $('#t-code').addEventListener('keydown', function(e){ if (e.key === 'Enter') tryTeacher(); });
+  $('#t-lock').addEventListener('click', function(){ setTeacher(false); });
+
+  $('#cw-size').addEventListener('change', cwInit);
+  $('#sc-level').addEventListener('change', scInit);
+
+  /* ---------- final score ---------- */
+  var finalPanel = $('#final'), finalBtn = $('#sb-final'), resetBtn = $('#final-reset'), resetTimer = null;
+  function showFinal(on){
+    finalPanel.hidden = !on; finalBtn.setAttribute('aria-expanded', on ? 'true' : 'false');
+    finalBtn.textContent = on ? 'Hide final score' : 'Final score';
+    if (on) { drawScore(); finalPanel.scrollIntoView({ block: 'nearest' }); }
+  }
+  finalBtn.addEventListener('click', function(){ showFinal(finalPanel.hidden); });
+  $('#final-close').addEventListener('click', function(){ showFinal(false); });
+
+  /* ---------- reset points: two confirmations ---------- */
+  var resetPanel = $('#reset'), resetTimer = null, unlockTimer = null, RESET_WAIT = 15000, UNLOCK_MS = 800;
+  var fmtPts = function(n){ return n < 0 ? '−' + (-n) : String(n); };
+  function resetClose(){
+    clearTimeout(resetTimer); clearTimeout(unlockTimer);
+    resetPanel.hidden = true; $('#sb-reset').setAttribute('aria-expanded', 'false');
+    $('#reset-pts').disabled = true; $('#reset-all').disabled = true;
+  }
+  function resetOpen(){
+    clearTimeout(resetTimer); clearTimeout(unlockTimer);
+    resetPanel.hidden = false; $('#sb-reset').setAttribute('aria-expanded', 'true');
+    $('#reset-step1').hidden = false; $('#reset-step2').hidden = true;
+    $('#reset-msg').textContent = 'Step 1 of 2. Reset your total points? You have ' + fmtPts(total()) + ' points now.';
+    $('#reset-note').textContent = '';
+    resetTimer = setTimeout(resetClose, RESET_WAIT);
+    resetPanel.scrollIntoView({ block: 'nearest' });
+    $('#reset-cancel1').focus();
+  }
+  function resetStep2(){
+    clearTimeout(resetTimer); clearTimeout(unlockTimer);
+    $('#reset-step1').hidden = true; $('#reset-step2').hidden = false;
+    $('#reset-msg').textContent = 'Step 2 of 2. This cannot be undone. Choose what to erase.';
+    $('#reset-note').textContent = 'Points only keeps the questions already used, so they do not come back. Points and used questions starts a completely fresh session.';
+    $('#reset-pts').disabled = true; $('#reset-all').disabled = true;
+    unlockTimer = setTimeout(function(){ $('#reset-pts').disabled = false; $('#reset-all').disabled = false; }, UNLOCK_MS);
+    resetTimer = setTimeout(resetClose, RESET_WAIT);
+    $('#reset-cancel2').focus();
+  }
+  $('#sb-reset').addEventListener('click', function(){ if (resetPanel.hidden) resetOpen(); else resetClose(); });
+  $('#final-reset').addEventListener('click', resetOpen);
+  $('#reset-continue').addEventListener('click', resetStep2);
+  $('#reset-cancel1').addEventListener('click', resetClose);
+  $('#reset-cancel2').addEventListener('click', resetClose);
+  $('#reset-pts').addEventListener('click', function(){
+    if (this.disabled) return;
+    KEYS.forEach(function(k){ score[k] = 0; }); saveScore(); resetClose();
+    drawScore('Points reset to 0. Used questions were kept.', ''); drawLeft();
+  });
+  $('#reset-all').addEventListener('click', function(){
+    if (this.disabled) return;
+    KEYS.forEach(function(k){ score[k] = 0; used[k] = {}; }); saveScore(); saveUsed(); resetClose();
+    wsInit(); cwInit(); scInit(); hmInit();
+    drawScore('Points and used questions reset. New session started.', ''); drawLeft();
+  });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !resetPanel.hidden) resetClose(); });
+
+  wsInit(); scInit(); hmInit(); drawScore(); drawLeft();
+})();
+</script>
+</body></html>
